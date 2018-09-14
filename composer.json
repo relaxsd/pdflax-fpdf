@@ -1,0 +1,21 @@
+{
+  "name": "relaxsd/pdflax-fpdf",
+  "description": "Fpdf implementation for Pdflax.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Martijn Kriek",
+      "email": "martijn.kriek@relax-software.nl"
+    }
+  ],
+  "require": {
+    "anouar/fpdf": "1.0.1",
+    "relaxsd/pdflax": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pdflax\\Fpdf\\": "src/Fpdf"
+    }
+  }
+}
