@@ -1,13 +1,11 @@
 <?php
 
-namespace Pdflax\Factory;
+namespace Pdflax\Fpdf;
 
 use Anouar\Fpdf\Fpdf;
-use Pdflax\Contracts\PdfCreatorInterface;
 use Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Pdflax\Contracts\PdfDocumentInterface;
 use Pdflax\Creator\PdfCreator;
-use Pdflax\Fpdf\FpdfDocumentAdapter;
 
 class FPdfPdfCreator extends PdfCreator
 {
