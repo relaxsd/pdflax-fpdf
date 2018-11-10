@@ -1,6 +1,6 @@
 <?php
 
-namespace Pdflax\Fpdf;
+namespace Relaxsd\Pdflax\Fpdf;
 
 use Anouar\Fpdf\Fpdf;
 use Pdflax\Contracts\PdfCreatorOptionsInterface;

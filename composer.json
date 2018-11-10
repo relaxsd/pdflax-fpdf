@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Pdflax\\Fpdf\\": "src/Fpdf"
+      "Relaxsd\\Pdflax\\Fpdf\\": "src"
     }
   }
 }
