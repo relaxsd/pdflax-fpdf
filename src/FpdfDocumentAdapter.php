@@ -429,6 +429,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      * @param float|string                          $h
      * @param string                                $txt
      * @param \Relaxsd\Stylesheets\Style|array|null $style
+     *                                                    
+     * @return $this                                                   
      */
     public function cell($w, $h = 0.0, $txt = '', $style = null)
     {
@@ -459,6 +461,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             );
 
         }
+
+        return $this;
     }
 
     /**
