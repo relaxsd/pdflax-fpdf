@@ -3,9 +3,9 @@
 namespace Relaxsd\Pdflax\Fpdf;
 
 use Anouar\Fpdf\Fpdf;
-use Pdflax\Contracts\PdfCreatorOptionsInterface;
-use Pdflax\Contracts\PdfDocumentInterface;
-use Pdflax\Creator\PdfCreator;
+use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
+use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
+use Relaxsd\Pdflax\Creator\PdfCreator;
 
 class FPdfPdfCreator extends PdfCreator
 {

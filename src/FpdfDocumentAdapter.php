@@ -3,77 +3,28 @@
 namespace Relaxsd\Pdflax\Fpdf;
 
 use Anouar\Fpdf\Fpdf;
-use Pdflax\Contracts\PdfDocumentInterface;
-use Pdflax\PdfDOMTrait;
-use Pdflax\PdfStyleTrait;
+use Relaxsd\Pdflax\Color;
+use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
+use Relaxsd\Pdflax\Fpdf\Translators\Align;
+use Relaxsd\Pdflax\Fpdf\Translators\Border;
+use Relaxsd\Pdflax\Fpdf\Translators\Fill;
+use Relaxsd\Pdflax\Fpdf\Translators\FontStyle;
+use Relaxsd\Pdflax\Fpdf\Translators\LineStyle;
+use Relaxsd\Pdflax\Fpdf\Translators\Ln;
+use Relaxsd\Pdflax\Fpdf\Translators\Multiline;
+use Relaxsd\Pdflax\Fpdf\Translators\Orientation;
+use Relaxsd\Pdflax\Fpdf\Translators\RectStyle;
+use Relaxsd\Pdflax\Fpdf\Translators\Size;
+use Relaxsd\Pdflax\PdfDOMTrait;
+use Relaxsd\Pdflax\PdfStyleTrait;
+use Relaxsd\Stylesheets\Style;
+use Relaxsd\Stylesheets\Stylesheet;
 
 class FpdfDocumentAdapter implements PdfDocumentInterface
 {
 
     use PdfDOMTrait;
     use PdfStyleTrait;
-
-    protected $stylesheet = [
-        // Inherited by all other styles
-        'DEFAULT' => [
-            'font-family' => 'Arial',
-            'font-style'  => '',
-            'font-size'   => 11,
-            'text-color'  => [0, 0, 0], // black
-        ],
-
-        // Used for all cells, including block, p, h1, h2
-        'cell'    => [
-            // FPdf default for cell()
-            'align'     => 'L',
-            'border'    => 0,
-            'fill'      => 0,
-            'link'      => '',
-            'multiline' => false,
-            'ln'        => 0,
-        ],
-
-        'block' => [
-        ],
-
-        // The paragraph type.
-        // Inherits from DEFAULT, 'cell' and 'block'
-        'p' => [
-            'align'     => 'L',
-            'ln'        => 2,    // FPdf always uses Ln=2 for MultiCell. Important for correctly recognizing page breaks.
-            'multiline' => true, // Uses MultiCell
-        ],
-
-        // Heading 1 type
-        // Inherits from DEFAULT, 'cell' and 'block'
-        'h1' => [
-            'font-style' => 'B',
-            'font-size'  => 14,
-
-            'ln'    => 2,
-            'align' => 'L',
-        ],
-
-        // Heading 2 type
-        // Inherits from DEFAULT, 'cell' and 'block'
-        'h2' => [
-            'font-style' => 'B',
-            'font-size'  => 12,
-            'ln'         => 2,
-            'align'      => 'L',
-        ],
-
-        '.align-right' => [
-            'align' => 'R',
-        ],
-
-    ];
-
-    protected static $COLORS = [
-        'black' => [0, 0, 0],
-        'white' => [255, 255, 255],
-        'red'   => [255, 0, 0],
-    ];
 
     /**
      * @var Fpdf
@@ -83,16 +34,79 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     /**
      * FpdfDocumentAdapter constructor.
      *
-     * @param Fpdf       $fpdf
+     * @param Fpdf $fpdf
      */
     public function __construct(Fpdf $fpdf)
     {
-        $this->fpdf   = $fpdf;
+        $this->fpdf = $fpdf;
+
+        $this->addStylesheet(new Stylesheet([
+
+            // TODO: Old Code
+            // Inherited by all other styles
+            'DEFAULT'      => [
+                'font-family' => 'Arial',
+                'font-style'  => '',
+                'font-size'   => 11,
+                'text-color'  => [0, 0, 0],
+            ],
+            // Used for all cells, including block, p, h1, h2
+            'cell'         => [
+                // FPdf default for cell()
+                'align'     => 'L',
+                'border'    => 0,
+                'fill'      => 0,
+                'link'      => '',
+                'multiline' => false,
+                'ln'        => 0,
+            ],
+            'block'        => [
+            ],
+
+            // The paragraph type.
+            // Inherits from DEFAULT, 'cell' and 'block'
+            'p'            => [
+                'align'     => 'L',
+                'ln'        => 2, // FPdf always uses Ln=2 for MultiCell. Important for correctly recognizing page breaks
+                'multiline' => true, // Uses MultiCel
+            ],
+            // Heading 1 type
+            // Inherits from DEFAULT, 'cell' and 'block'
+            'h1'           => [
+                'font-style' => 'B',
+                'font-size'  => 14,
+                'ln'         => 2,
+                'align'      => 'L',
+            ],
+            // Heading 2 type
+            // Inherits from DEFAULT, 'cell' and 'block'
+            'h2'           => [
+                'font-style' => 'B',
+                'font-size'  => 12,
+                'ln'         => 2,
+                'align'      => 'L',
+            ],
+            '.align-right' => [
+                'align' => 'R',
+            ],
+        ]));
+
     }
 
-    public function setFont($family, $style = '', $size = 0)
+    /**
+     * @param string $family
+     * @param int    $style
+     * @param int    $size
+     *
+     * @return self
+     */
+    public function setFont($family, $style = self::FONT_STYLE_NORMAL, $size = 0)
     {
-        $this->fpdf->SetFont($family, $style, $size);
+        $this->fpdf->SetFont(
+            $family,
+            FontStyle::translate($style),
+            $size
+        );
 
         return $this;
     }
@@ -106,7 +120,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setDrawColor($r, $g = null, $b = null)
     {
-        list ($r, $g, $b) = $this->getRGB($r, $g, $b);
+        list ($r, $g, $b) = Color::toRGB($r, $g, $b);
+
         $this->fpdf->SetDrawColor($r, $g, $b);
 
         return $this;
@@ -121,7 +136,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setTextColor($r, $g = null, $b = null)
     {
-        list ($r, $g, $b) = $this->getRGB($r, $g, $b);
+        list ($r, $g, $b) = Color::toRGB($r, $g, $b);
+
         $this->fpdf->SetTextColor($r, $g, $b);
 
         return $this;
@@ -136,57 +152,18 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setFillColor($r, $g = null, $b = null)
     {
-        list ($r, $g, $b) = $this->getRGB($r, $g, $b);
+        list ($r, $g, $b) = Color::toRGB($r, $g, $b);
+
         $this->fpdf->SetFillColor($r, $g, $b);
 
         return $this;
     }
 
     /**
-     * @param string|int|array $r Red value (with $g and $b) or greyscale value ($g and $b null) or color name or [r,g,b] array
-     * @param int|null         $g Green value
-     * @param int|null         $b Blue value
-     *
-     * @return array           Array with [ reg, green, blue ] values
-     */
-    protected function getRGB($r, $g = null, $b = null)
-    {
-
-        if (is_array($r))
-            return $r;
-
-        if (is_string($r) && array_key_exists($r, self::$COLORS))
-            return self::$COLORS[$r];
-
-        if (is_int($r))
-            return isset($g) ? [$r, $g, $b] : [$r, $r, $r];
-
-        throw new \LogicException('Unsupported color configuration');
-    }
-
-    /**
-     * @param float|string $w
-     * @param float        $h
-     * @param string       $txt
-     * @param array|string $options
-     */
-    public function cell($w, $h = 0.0, $txt = '', $options = [])
-    {
-        // Merge the options with the defaults to be sure all fields exist.
-        $options = $this->getStyle('cell', $options);
-
-        if ($options['multiline']) {
-            $this->fpdf->MultiCell($w, $h, $txt, $options['border'], $options['align'], $options['fill']);
-        } else {
-            $this->fpdf->Cell($w, $h, $txt, $options['border'], $options['ln'], $options['align'], $options['fill'], $options['link']);
-        }
-    }
-
-    /**
      * @param     $auto
      * @param int $margin
      *
-     * @return PdfDocumentInterface
+     * @return self
      */
     public function setAutoPageBreak($auto, $margin = 0)
     {
@@ -196,14 +173,18 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * @param string $orientation
-     * @param string $size
+     * @param string|null $orientation
+     * @param string|null $size
      *
-     * @return PdfDocumentInterface
+     * @return self
+     * @throws \Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException
      */
-    public function addPage($orientation = '', $size = '')
+    public function addPage($orientation = null, $size = null)
     {
-        $this->fpdf->AddPage($orientation, $size);
+        $this->fpdf->AddPage(
+            Orientation::translate($orientation),
+            Size::translate($size)
+        );
 
         return $this;
     }
@@ -222,13 +203,17 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * @param float|null $h
+     * @param int        $n
+     * @param array|null $options
      *
      * @return mixed
      */
-    public function newLine($h = null)
+    public function newLine($n = 1, $options = null)
     {
-        $this->fpdf->Ln($h);
+        // TODO: h as option!
+        for ($i = 0; $i < $n; $i++) {
+            $this->fpdf->Ln(/* h */);
+        }
 
         return $this;
     }
@@ -299,20 +284,28 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      * Position the 'cursor' at a given X
      *
      * @param float|string $x Local X-coordinate
+     *
+     * @return PdfDocumentInterface
      */
     public function setCursorX($x)
     {
         $this->fpdf->SetX($x);
+
+        return $this;
     }
 
     /**
      * Position the 'cursor' at a given Y
      *
      * @param float|string $y Local Y-coordinate
+     *
+     * @return PdfDocumentInterface
      */
     public function setCursorY($y)
     {
         $this->fpdf->SetY($y);
+
+        return $this;
     }
 
     /**
@@ -320,10 +313,25 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      *
      * @param float|string $x Local X-coordinate
      * @param float|string $y Local Y-coordinate
+     *
+     * @return PdfDocumentInterface
      */
     public function setCursorXY($x, $y)
     {
         $this->fpdf->setXY($x, $y);
+
+        return $this;
+    }
+
+    /**
+     * @param $leftMargin
+     *
+     * @return $this
+     */
+    public function setLeftMargin($leftMargin)
+    {
+        $this->fpdf->SetLeftMargin($leftMargin);
+        return $this;
     }
 
     /**
@@ -332,6 +340,18 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     public function getLeftMargin()
     {
         return $this->fpdf->lMargin;
+    }
+
+    /**
+     * @param $rightMargin
+     *
+     * @return $this
+     */
+    public function setRightMargin($rightMargin)
+    {
+        $this->fpdf->SetRightMargin($rightMargin);
+
+        return $this;
     }
 
     /**
@@ -351,12 +371,178 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * @param float $value
+     * @param string $fileName
      *
+     * @return PdfDocumentInterface
+     */
+    public function save($fileName)
+    {
+        $this->fpdf->Output($fileName, 'F');
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
-    public function euro($value)
+    public function getPdfContent()
     {
-        return chr(128) . ' ' . number_format($value, 2, ',', '.');
+        return $this->fpdf->Output('', 'S');
     }
+
+    /**
+     * @param array|null $options
+     *
+     * @return \Relaxsd\Pdflax\Contracts\CurrencyFormatterInterface
+     */
+    public function getCurrencyFormatter($options = [])
+    {
+        return new FpdfCurrencyFormatter($options);
+    }
+
+    /**
+     * Move the 'cursor' horizontally
+     *
+     * @param float|string $d distance
+     *
+     * @return self
+     */
+    public function moveCursorX($d)
+    {
+        // TODO: Implement moveCursorX() method.
+    }
+
+    /**
+     * Move the 'cursor' vertically
+     *
+     * @param float|string $d distance
+     *
+     * @return self
+     */
+    public function moveCursorY($d)
+    {
+        // TODO: Implement moveCursorY() method.
+    }
+
+    /**
+     * @param float|string                          $w
+     * @param float|string                          $h
+     * @param string                                $txt
+     * @param \Relaxsd\Stylesheets\Style|array|null $style
+     */
+    public function cell($w, $h = 0.0, $txt = '', $style = null)
+    {
+        $style = Style::merged($this->getStyle('cell'), $style);
+
+        if (Multiline::translate($style)) {
+
+            $this->fpdf->MultiCell(
+                $w,
+                $h,
+                $txt,
+                Border::translate($style),
+                Align::translate($style),
+                Fill::translate($style)
+            );
+
+        } else {
+
+            $this->fpdf->Cell(
+                $w,
+                $h,
+                $txt,
+                Border::translate($style),
+                Ln::translate($style),
+                Align::translate($style),
+                Fill::translate($style),
+                ''
+            );
+
+        }
+    }
+
+    /**
+     * @param float|string                          $x
+     * @param float|string                          $y
+     * @param float|string                          $w
+     * @param float|string                          $h
+     * @param \Relaxsd\Stylesheets\Style|array|null $style
+     *
+     * @return self
+     */
+    public function rectangle($x, $y, $w, $h, $style = null)
+    {
+        RectStyle::applyStyle($this->fpdf, $style);
+        $this->fpdf->Rect(
+            $x,
+            $y,
+            $w,
+            $h,
+            RectStyle::translate($style)
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param float|string                          $x1
+     * @param float|string                          $y1
+     * @param float|string                          $x2
+     * @param float|string                          $y2
+     * @param \Relaxsd\Stylesheets\Style|array|null $style
+     *
+     * @return self
+     */
+    public function line($x1, $y1, $x2, $y2, $style = null)
+    {
+        LineStyle::applyStyle($this->fpdf, $style);
+        $this->fpdf->Line($x1, $y1, $x2, $y2);
+
+        return $this;
+    }
+
+    /**
+     * @param string                                $file
+     * @param float|string                          $x
+     * @param float|string                          $y
+     * @param float|string                          $w
+     * @param float|string                          $h
+     * @param string                                $type
+     * @param string                                $link
+     * @param \Relaxsd\Stylesheets\Style|array|null $style
+     *
+     *
+     * @return self
+     */
+    public function image($file, $x, $y, $w, $h, $type = '', $link = '', $style = null)
+    {
+        $this->fpdf->Image(
+            $file,
+            $x,
+            $y,
+            $w,
+            $h,
+            $type,
+            $link
+        );
+
+        // TODO: Draw rect if we want a border!
+    }
+
+    /**
+     * @param float|string $h
+     * @param string       $text
+     * @param string       $link
+     *
+     * @return self
+     */
+    public function write($h, $text, $link = '')
+    {
+        $this->fpdf->Write(
+            $h,
+            $text,
+            $link
+        );
+    }
+
 }
