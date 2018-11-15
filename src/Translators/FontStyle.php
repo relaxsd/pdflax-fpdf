@@ -2,10 +2,27 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Relaxsd\Pdflax\Color;
 use Relaxsd\Pdflax\PdfView;
 
 class FontStyle
 {
+
+    /**
+     * @param \Anouar\Fpdf\Fpdf $fpdf
+     * @param Style|null        $style
+     */
+    public static function applyStyle($fpdf, $style = null)
+    {
+
+        if (!isset($style)) return;
+
+        if ($style->hasValue('text-color')) {
+            list($r, $g, $b) = Color::toRGB($style->getValue('text-color'));
+            $fpdf->SetTextColor($r, $g, $b);
+        }
+
+    }
 
     /**
      * @param int $pdflaxFontStyle

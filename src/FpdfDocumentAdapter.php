@@ -42,52 +42,49 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
         $this->addStylesheet(new Stylesheet([
 
-            // TODO: Old Code
             // Inherited by all other styles
-            'DEFAULT'      => [
+            'body'         => [
                 'font-family' => 'Arial',
                 'font-style'  => '',
                 'font-size'   => 11,
                 'text-color'  => [0, 0, 0],
             ],
-            // Used for all cells, including block, p, h1, h2
+            // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
                 // FPdf default for cell()
-                'align'     => 'L',
+                'align'     => 'left',
                 'border'    => 0,
                 'fill'      => 0,
                 'link'      => '',
                 'multiline' => false,
                 'ln'        => 0,
             ],
-            'block'        => [
-            ],
 
             // The paragraph type.
-            // Inherits from DEFAULT, 'cell' and 'block'
+            // Adds to 'body' and 'cell'
             'p'            => [
-                'align'     => 'L',
+                'align'     => 'left',
                 'ln'        => 2, // FPdf always uses Ln=2 for MultiCell. Important for correctly recognizing page breaks
                 'multiline' => true, // Uses MultiCel
             ],
             // Heading 1 type
-            // Inherits from DEFAULT, 'cell' and 'block'
+            // Adds to 'body' and 'cell'
             'h1'           => [
-                'font-style' => 'B',
+                'font-style' => 'bold',
                 'font-size'  => 14,
                 'ln'         => 2,
-                'align'      => 'L',
+                'align'      => 'left',
             ],
             // Heading 2 type
-            // Inherits from DEFAULT, 'cell' and 'block'
+            // Adds to 'body' and 'cell'
             'h2'           => [
-                'font-style' => 'B',
+                'font-style' => 'bold',
                 'font-size'  => 12,
                 'ln'         => 2,
-                'align'      => 'L',
+                'align'      => 'left',
             ],
             '.align-right' => [
-                'align' => 'R',
+                'align' => 'right',
             ],
         ]));
 
@@ -429,12 +426,14 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      * @param float|string                          $h
      * @param string                                $txt
      * @param \Relaxsd\Stylesheets\Style|array|null $style
-     *                                                    
-     * @return $this                                                   
+     *
+     * @return $this
      */
     public function cell($w, $h = 0.0, $txt = '', $style = null)
     {
-        $style = Style::merged($this->getStyle('cell'), $style);
+        $style = Style::merged($this->getStyle('body'), $this->getStyle('cell'), $style);
+
+        FontStyle::applyStyle($this->fpdf, $style);
 
         if (Multiline::translate($style)) {
 
@@ -534,19 +533,23 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * @param float|string $h
-     * @param string       $text
-     * @param string       $link
+     * @param float|string                          $h
+     * @param string                                $text
+     * @param string                                $link
+     * @param \Relaxsd\Stylesheets\Style|array|null $style
      *
      * @return self
      */
-    public function write($h, $text, $link = '')
+    public function write($h, $text, $link = '', $style = null)
     {
+        FontStyle::applyStyle($this->fpdf, $style);
+
         $this->fpdf->Write(
             $h,
             $text,
             $link
         );
+        
     }
 
 }
