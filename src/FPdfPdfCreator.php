@@ -30,6 +30,7 @@ class FPdfPdfCreator extends PdfCreator
         'orientation' => PdfCreatorOptionsInterface::ORIENTATION_PORTRAIT,
         'unit'        => PdfCreatorOptionsInterface::UNIT_MM,
         'size'        => PdfCreatorOptionsInterface::SIZE_A4,
+        'compression' => true,
     ];
 
     /**
@@ -50,9 +51,19 @@ class FPdfPdfCreator extends PdfCreator
         // Create the FPdf instance
         $fpdf = new Fpdf($options['orientation'], $options['unit'], $options['size']);
 
+        // Adjust zip compression if given in the options (default true)
+        if (array_key_exists('compression', $options)) {
+            $fpdf->SetCompression($options['compression']);
+        }
+
         // Set leftmargin if given in the options
         if (array_key_exists('margin-left', $options)) {
             $fpdf->SetLeftMargin($options['margin-left']);
+        }
+
+        // Set leftmargin if given in the options
+        if (array_key_exists('font-path', $options)) {
+            $fpdf->fontpath = $options['font-path'];
         }
 
         // Additional settings can be put on the 'raw' object later on.

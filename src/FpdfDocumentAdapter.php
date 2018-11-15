@@ -65,7 +65,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             'p'            => [
                 'align'     => 'left',
                 'ln'        => 2, // FPdf always uses Ln=2 for MultiCell. Important for correctly recognizing page breaks
-                'multiline' => true, // Uses MultiCel
+                'multiline' => true, // Uses MultiCell
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
@@ -100,9 +100,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     public function setFont($family, $style = self::FONT_STYLE_NORMAL, $size = 0)
     {
         $this->fpdf->SetFont(
-            $family,
+            $family ?: '',
             FontStyle::translate($style),
-            $size
+            $size ?: 0
         );
 
         return $this;
@@ -169,6 +169,36 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         return $this;
     }
 
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function setFontPath($path)
+    {
+        $this->fpdf->fontpath = $path;
+
+        return $this;
+    }
+
+    /**
+     * @param string $family
+     * @param integer $style
+     * @param string $filename
+     *
+     * @return $this
+     */
+    public function registerFont($family, $style, $filename) {
+        $this->fpdf->AddFont(
+            $family,
+            FontStyle::translate($style),
+            $filename
+        );
+        
+        return $this;
+    }
+
+   
     /**
      * @param string|null $orientation
      * @param string|null $size
@@ -549,7 +579,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             $text,
             $link
         );
-        
+
     }
 
 }

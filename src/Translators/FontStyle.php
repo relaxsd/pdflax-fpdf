@@ -22,6 +22,12 @@ class FontStyle
             $fpdf->SetTextColor($r, $g, $b);
         }
 
+        $fpdf->SetFont(
+            $style->getValue('font-family', ''),
+            self::translate($style->getValue('font-style', PdfView::FONT_STYLE_NORMAL)),
+            $style->getValue('font-size', 0)
+        );
+
     }
 
     /**
