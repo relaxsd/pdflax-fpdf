@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "anouar/fpdf": "1.0.1",
+    "anouar/fpdf": ">=1.0.1",
     "relaxsd/pdflax": "dev-master",
     "relaxsd/php-stylesheets": "dev-master"
   },
