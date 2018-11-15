@@ -51,7 +51,7 @@ class FpdfDocumentAdapterTest extends TestCase
         $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_BOLD, 2);
         $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_ITALIC, 3);
         $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_UNDERLINE, 4);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_BOLD | PdfView::FONT_STYLE_ITALIC | PdfView::FONT_STYLE_UNDERLINE, 5);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_BOLD . PdfView::FONT_STYLE_ITALIC . PdfView::FONT_STYLE_UNDERLINE, 5);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 

@@ -92,7 +92,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
     /**
      * @param string $family
-     * @param int    $style
+     * @param string    $style
      * @param int    $size
      *
      * @return self

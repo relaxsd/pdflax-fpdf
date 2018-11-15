@@ -31,7 +31,7 @@ class FontStyle
     }
 
     /**
-     * @param int $pdflaxFontStyle
+     * @param string $pdflaxFontStyle
      *
      * @return string
      */
@@ -39,15 +39,15 @@ class FontStyle
     {
         $result = '';
 
-        if ($pdflaxFontStyle & PdfView::FONT_STYLE_BOLD) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, PdfView::FONT_STYLE_BOLD)) {
             $result .= 'B';
         }
 
-        if ($pdflaxFontStyle & PdfView::FONT_STYLE_ITALIC) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, PdfView::FONT_STYLE_ITALIC)) {
             $result .= 'I';
         }
 
-        if ($pdflaxFontStyle & PdfView::FONT_STYLE_UNDERLINE) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, PdfView::FONT_STYLE_UNDERLINE)) {
             $result .= 'U';
         }
 
