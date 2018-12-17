@@ -260,7 +260,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function getX()
     {
-        return 0;
+        return $this->fpdf->x;
     }
 
     /**
@@ -268,7 +268,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function getY()
     {
-        return 0;
+        return $this->fpdf->y;
     }
 
     /**

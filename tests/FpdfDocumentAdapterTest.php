@@ -210,10 +210,10 @@ class FpdfDocumentAdapterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_zero_for_x_and_y()
+    public function it_returns_x_and_y()
     {
-        $this->assertEquals(0, $this->fpdfDocumentAdapter->getX());
-        $this->assertEquals(0, $this->fpdfDocumentAdapter->getY());
+        $this->assertEquals(10, $this->fpdfDocumentAdapter->getX());
+        $this->assertEquals(15, $this->fpdfDocumentAdapter->getY());
     }
 
     /**
