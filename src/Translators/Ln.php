@@ -15,7 +15,7 @@ class Ln
      */
     public static function translate($style, $default = 0)
     {
-        return $style->getValue('ln', $default);
+        return Style::value($style, 'ln', $default);
     }
 
 }

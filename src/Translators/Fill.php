@@ -2,20 +2,37 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Relaxsd\Pdflax\Color;
 use Relaxsd\Stylesheets\Style;
 
 class Fill
 {
 
     /**
-     * @param Style   $style
-     * @param boolean $default
+     * @param Style $style
      *
-     * @return boolean
+     * @return integer
      */
-    public static function translate($style, $default = false)
+    public static function translate($style)
     {
-        return !!$default;
+        return (isset($style) && $style->hasValue('fill-color')) ? 1 : 0;
+    }
+
+    /**
+     * @param \Anouar\Fpdf\Fpdf $fpdf
+     * @param Style|null        $style
+     */
+    public static function applyStyle($fpdf, $style)
+    {
+
+        if (self::translate($style)) {
+
+            // Black is the FPdf default
+            list($r, $g, $b) = Color::toRGB(Style::value($style, 'fill-color', 'black'));
+            $fpdf->SetFillColor($r, $g, $b);
+
+        }
+
     }
 
 }

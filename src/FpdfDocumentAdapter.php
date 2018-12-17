@@ -56,7 +56,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 'border'    => 0,
                 'fill'      => 0,
                 'link'      => '',
-                'multiline' => false, // Uses Cell
+                'multiline' => false, // Uses Cell, not MultiCell
                 'ln'        => 0,
             ],
 
@@ -67,7 +67,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 // By default, FPdf always uses Ln=2 for MultiCell.
                 // TODO: 1 or 2 is important for correctly recognizing page breaks
                 'ln'        => 1,
-                'multiline' => true, // Uses MultiCell
+                'multiline' => true, // Uses MultiCell, not Cell
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
@@ -466,6 +466,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         $style = Style::merged($this->getStyle('body'), $this->getStyle('cell'), $style);
 
         FontStyle::applyStyle($this->fpdf, $style);
+        Border::applyStyle($this->fpdf, $style);
+        Fill::applyStyle($this->fpdf, $style);
 
         if (Multiline::translate($style)) {
 
@@ -527,7 +529,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function rectangle($x, $y, $w, $h, $style = null)
     {
+        // Set border (color, width) and fill styles
         RectStyle::applyStyle($this->fpdf, $style);
+
         $this->fpdf->Rect(
             $x,
             $y,
@@ -550,7 +554,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function line($x1, $y1, $x2, $y2, $style = null)
     {
+        // Set border (color, width) styles
         LineStyle::applyStyle($this->fpdf, $style);
+
         $this->fpdf->Line($x1, $y1, $x2, $y2);
 
         return $this;

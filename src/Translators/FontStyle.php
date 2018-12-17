@@ -4,31 +4,10 @@ namespace Relaxsd\Pdflax\Fpdf\Translators;
 
 use Relaxsd\Pdflax\Color;
 use Relaxsd\Pdflax\PdfView;
+use Relaxsd\Stylesheets\Style;
 
 class FontStyle
 {
-
-    /**
-     * @param \Anouar\Fpdf\Fpdf $fpdf
-     * @param Style|null        $style
-     */
-    public static function applyStyle($fpdf, $style = null)
-    {
-
-        if (!isset($style)) return;
-
-        if ($style->hasValue('text-color')) {
-            list($r, $g, $b) = Color::toRGB($style->getValue('text-color'));
-            $fpdf->SetTextColor($r, $g, $b);
-        }
-
-        $fpdf->SetFont(
-            $style->getValue('font-family', ''),
-            self::translate($style->getValue('font-style', PdfView::FONT_STYLE_NORMAL)),
-            $style->getValue('font-size', 0)
-        );
-
-    }
 
     /**
      * @param string $pdflaxFontStyle
@@ -52,6 +31,24 @@ class FontStyle
         }
 
         return $result;
+    }
+
+    /**
+     * @param \Anouar\Fpdf\Fpdf $fpdf
+     * @param Style|null        $style
+     */
+    public static function applyStyle($fpdf, $style = null)
+    {
+
+        list($r, $g, $b) = Color::toRGB(Style::value($style, 'text-color', 'black'));
+        $fpdf->SetTextColor($r, $g, $b);
+
+        $fpdf->SetFont(
+            Style::value($style, 'font-family', ''),
+            self::translate(Style::value($style, 'font-style', PdfView::FONT_STYLE_NORMAL)),
+            Style::value($style, 'font-size', 0)
+        );
+
     }
 
 }

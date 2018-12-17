@@ -15,7 +15,7 @@ class Align
      */
     public static function translate($style, $default = '')
     {
-        switch ($style->getValue('align')) {
+        switch (Style::value($style, 'align')) {
             case 'left':
                 return 'L';
             case 'center':

@@ -10,24 +10,23 @@ class RectStyle
 
     /**
      * @param Style|null $style
-     * @param string     $default
      *
      * @return string
      */
-    public static function translate($style, $default = '')
+    public static function translate($style)
     {
         if (!isset($style)) {
-            return $default;
+            return '';
         }
 
         $result = '';
 
-        if ($style->hasValue('border-color')) {
-            $result .= 'F';
+        if ($style->hasValue('border-color') || $style->hasValue('border-size')) {
+            $result .= 'D';
         }
 
         if ($style->hasValue('fill-color')) {
-            $result .= 'D';
+            $result .= 'F';
         }
 
         return $result;
@@ -40,16 +39,27 @@ class RectStyle
     public static function applyStyle($fpdf, $style = null)
     {
 
-        if (!isset($style)) return;
+        $rectStyle = self::translate($style);
 
-        if ($style->hasValue('border-color')) {
-            list($r, $g, $b) = Color::toRGB($style->getValue('border-color'));
+        // FPdf draws a border for 'D' (draw) and '' (the default)
+        if ($rectStyle == '' || str_contains($rectStyle, 'D')) {
+
+            list($r, $g, $b) = Color::toRGB(Style::value($style, 'border-color', 'black'));
             $fpdf->SetDrawColor($r, $g, $b);
+
+            // TODO: Convert string to float etc
+            // 0.2 mm is the FPdf default
+            $fpdf->SetLineWidth(Style::value($style, 'border-width', 0.2));
+
         }
 
-        if ($style->hasValue('fill-color')) {
-            list($r, $g, $b) = Color::toRGB($style->getValue('fill-color'));
+        // FPdf draws a border for 'F' only
+        if (str_contains($rectStyle, 'F')) {
+
+            // Black is the FPdf default
+            list($r, $g, $b) = Color::toRGB(Style::value($style, 'fill-color', 'black'));
             $fpdf->SetFillColor($r, $g, $b);
+
         }
 
     }

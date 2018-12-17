@@ -15,17 +15,12 @@ class LineStyle
     public static function applyStyle($fpdf, $style = null)
     {
 
-        if (!isset($style)) return;
+        list($r, $g, $b) = Color::toRGB(Style::value($style, 'border-color', 'black'));
+        $fpdf->SetDrawColor($r, $g, $b);
 
-        if ($style->hasValue('line-width')) {
-            // TODO: Convert string to float etc
-            $fpdf->SetLineWidth($style->getValue('line-width'));
-        }
-
-        if ($style->hasValue('line-color')) {
-            list($r, $g, $b) = Color::toRGB($style->getValue('line-color'));
-            $fpdf->SetDrawColor($r, $g, $b);
-        }
+        // TODO: Convert string to float etc
+        // 0.2 mm is the FPdf default
+        $fpdf->SetLineWidth(Style::value($style, 'border-width', 0.2));
 
     }
 

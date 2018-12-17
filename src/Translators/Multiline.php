@@ -9,13 +9,12 @@ class Multiline
 
     /**
      * @param Style   $style
-     * @param boolean $default
      *
      * @return boolean
      */
-    public static function translate($style, $default = false)
+    public static function translate($style)
     {
-        return !!$style->getValue('multiline', $default);
+        return !!Style::value($style, 'multiline', false);
     }
 
 }
