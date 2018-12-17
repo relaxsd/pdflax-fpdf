@@ -485,19 +485,14 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
             $ln = Ln::translate($style);
 
+            // MultiCell uses ln=2 (bottom left) by default
             if ($ln == 1) {
                 // Next line
                 $this->fpdf->x = $this->fpdf->lMargin;
-                $this->fpdf->y = $oldY + $h;
-            } else if ($ln == 2) {
-                // Bottom left
-                $this->fpdf->x = $oldX;
-                $this->fpdf->y = $oldY + $h;
-            } else {
+            } else if ($ln == 0) {
                 // Top right
                 $this->fpdf->x = $oldX + $w;
                 $this->fpdf->y = $oldY;
-
             }
 
         } else {
