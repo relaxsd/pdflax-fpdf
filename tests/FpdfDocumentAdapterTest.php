@@ -27,7 +27,10 @@ class FpdfDocumentAdapterTest extends TestCase
     {
         parent::setUp();
 
-        $this->fpdfMock            = $this->getMockBuilder('\Anouar\Fpdf\Fpdf')->getMock();
+        $this->fpdfMock = $this->getMockBuilder('\Anouar\Fpdf\Fpdf')->getMock();
+
+        $this->setXY(10, 15);
+
         $this->fpdfDocumentAdapter = new FpdfDocumentAdapter($this->fpdfMock);
     }
 
@@ -383,6 +386,50 @@ class FpdfDocumentAdapterTest extends TestCase
 
         $this->fpdfDocumentAdapter->cell(10, 20, 'text', ['multiline' => true]);
 
+        $this->assertEquals(20, $this->fpdfMock->x);
+        $this->assertEquals(15, $this->fpdfMock->y);
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_newline_after_a_multicell()
+    {
+
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('MultiCell')
+            ->with(10, 20, 'text', 0, 'L', false);
+
+        $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+            'multiline' => true,
+            'ln'        => 1
+        ]);
+
+        $this->assertEquals(10, $this->fpdfMock->x);
+        $this->assertEquals(35, $this->fpdfMock->y);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_bottom_right_after_a_multicell()
+    {
+
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('MultiCell')
+            ->with(10, 20, 'text', 0, 'L', false);
+
+        $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+            'multiline' => true,
+            'ln'        => 2
+        ]);
+
+        $this->assertEquals(20, $this->fpdfMock->x);
+        $this->assertEquals(35, $this->fpdfMock->y);
+
     }
 
     /**
@@ -394,9 +441,9 @@ class FpdfDocumentAdapterTest extends TestCase
         $this->fpdfMock
             ->expects($this->once())
             ->method('Rect')
-            ->with(10,20,30,40);
+            ->with(10, 20, 30, 40);
 
-        $this->fpdfDocumentAdapter->rectangle(10,20,30,40);
+        $this->fpdfDocumentAdapter->rectangle(10, 20, 30, 40);
 
     }
 
@@ -409,9 +456,9 @@ class FpdfDocumentAdapterTest extends TestCase
         $this->fpdfMock
             ->expects($this->once())
             ->method('Line')
-            ->with(10,20,30,40);
+            ->with(10, 20, 30, 40);
 
-        $this->fpdfDocumentAdapter->line(10,20,30,40);
+        $this->fpdfDocumentAdapter->line(10, 20, 30, 40);
 
     }
 
@@ -424,9 +471,9 @@ class FpdfDocumentAdapterTest extends TestCase
         $this->fpdfMock
             ->expects($this->once())
             ->method('Image')
-            ->with('file', 10,20,30,40, 'type', 'link');
+            ->with('file', 10, 20, 30, 40, 'type', 'link');
 
-        $this->fpdfDocumentAdapter->image('file', 10,20,30,40, 'type', 'link');
+        $this->fpdfDocumentAdapter->image('file', 10, 20, 30, 40, 'type', 'link');
 
     }
 
@@ -444,4 +491,16 @@ class FpdfDocumentAdapterTest extends TestCase
         $this->fpdfDocumentAdapter->write(10, 'text', 'link');
 
     }
+
+    protected function setXY($x, $y)
+    {
+        $this->fpdfMock->x = $this->fpdfMock->lMargin = $x;
+        $this->fpdfMock->y = $y;
+    }
+
+    protected function getXY()
+    {
+        return [$this->fpdfMock->x, $this->fpdfMock->y];
+    }
+
 }

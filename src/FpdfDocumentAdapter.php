@@ -56,7 +56,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 'border'    => 0,
                 'fill'      => 0,
                 'link'      => '',
-                'multiline' => false,
+                'multiline' => false, // Uses Cell
                 'ln'        => 0,
             ],
 
@@ -64,7 +64,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body' and 'cell'
             'p'            => [
                 'align'     => 'left',
-                'ln'        => 2, // FPdf always uses Ln=2 for MultiCell. Important for correctly recognizing page breaks
+                // By default, FPdf always uses Ln=2 for MultiCell.
+                // TODO: 1 or 2 is important for correctly recognizing page breaks
+                'ln'        => 1,
                 'multiline' => true, // Uses MultiCell
             ],
             // Heading 1 type
@@ -467,6 +469,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
         if (Multiline::translate($style)) {
 
+            $oldX = $this->fpdf->x;
+            $oldY = $this->fpdf->y;
+
             $this->fpdf->MultiCell(
                 $w,
                 $h,
@@ -475,6 +480,23 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 Align::translate($style),
                 Fill::translate($style)
             );
+
+            $ln = Ln::translate($style);
+
+            if ($ln == 1) {
+                // Next line
+                $this->fpdf->x = $this->fpdf->lMargin;
+                $this->fpdf->y = $oldY + $h;
+            } else if ($ln == 2) {
+                // Bottom right
+                $this->fpdf->x = $oldX + $w;
+                $this->fpdf->y = $oldY + $h;
+            } else {
+                // Top right
+                $this->fpdf->x = $oldX + $w;
+                $this->fpdf->y = $oldY;
+
+            }
 
         } else {
 
