@@ -66,7 +66,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 'align'     => 'left',
                 // By default, FPdf always uses Ln=2 for MultiCell.
                 // TODO: 1 or 2 is important for correctly recognizing page breaks
-                'ln'        => 1,
+                'ln'        => 2,
                 'multiline' => true, // Uses MultiCell, not Cell
             ],
             // Heading 1 type
@@ -490,8 +490,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 $this->fpdf->x = $this->fpdf->lMargin;
                 $this->fpdf->y = $oldY + $h;
             } else if ($ln == 2) {
-                // Bottom right
-                $this->fpdf->x = $oldX + $w;
+                // Bottom left
+                $this->fpdf->x = $oldX;
                 $this->fpdf->y = $oldY + $h;
             } else {
                 // Top right
