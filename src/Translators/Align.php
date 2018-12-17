@@ -15,7 +15,7 @@ class Align
      */
     public static function translate($style, $default = '')
     {
-        switch ($style->getValue('border')) {
+        switch ($style->getValue('align')) {
             case 'left':
                 return 'L';
             case 'center':
