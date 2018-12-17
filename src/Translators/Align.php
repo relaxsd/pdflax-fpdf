@@ -9,11 +9,10 @@ class Align
 
     /**
      * @param Style|null $style
-     * @param string     $default
      *
      * @return string
      */
-    public static function translate($style, $default = '')
+    public static function translate($style)
     {
         switch (Style::value($style, 'align')) {
             case 'left':
@@ -23,7 +22,7 @@ class Align
             case 'right':
                 return 'R';
             default:
-                return $default;
+                return '';
         }
     }
 

@@ -9,13 +9,12 @@ class Ln
 
     /**
      * @param Style $style
-     * @param int   $default
      *
      * @return int
      */
-    public static function translate($style, $default = 0)
+    public static function translate($style)
     {
-        return Style::value($style, 'ln', $default);
+        return Style::value($style, 'ln', 0);
     }
 
 }
