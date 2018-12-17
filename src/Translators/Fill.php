@@ -15,7 +15,7 @@ class Fill
      */
     public static function translate($style)
     {
-        return (isset($style) && $style->hasValue('fill-color')) ? 1 : 0;
+        return Style::value($style, 'fill-color') ? 1 : 0;
     }
 
     /**
