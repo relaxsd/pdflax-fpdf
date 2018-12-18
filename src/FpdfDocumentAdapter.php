@@ -94,7 +94,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
     /**
      * @param string $family
-     * @param string    $style
+     * @param string $style
      * @param int    $size
      *
      * @return self
@@ -184,23 +184,23 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * @param string $family
+     * @param string  $family
      * @param integer $style
-     * @param string $filename
+     * @param string  $filename
      *
      * @return $this
      */
-    public function registerFont($family, $style, $filename) {
+    public function registerFont($family, $style, $filename)
+    {
         $this->fpdf->AddFont(
             $family,
             FontStyle::translate($style),
             $filename
         );
-        
+
         return $this;
     }
 
-   
     /**
      * @param string|null $orientation
      * @param string|null $size
@@ -318,7 +318,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorX($x)
     {
-        $this->fpdf->SetX($x);
+        $this->fpdf->SetX(
+            $this->parseGlobalValue_h($x)
+        );
 
         return $this;
     }
@@ -332,7 +334,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorY($y)
     {
-        $this->fpdf->SetY($y);
+        $this->fpdf->SetY(
+            $this->parseGlobalValue_v($y)
+        );
 
         return $this;
     }
@@ -347,7 +351,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorXY($x, $y)
     {
-        $this->fpdf->setXY($x, $y);
+        $this->fpdf->setXY(
+            $this->parseGlobalValue_h($x),
+            $this->parseGlobalValue_v($y)
+        );
 
         return $this;
     }
@@ -506,6 +513,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     {
         $style = Style::merged($this->getStyle('body'), $this->getStyle('cell'), $style);
 
+        $w = $this->parseGlobalValue_h($w);
+        $h = $this->parseGlobalValue_v($h);
+
         FontStyle::applyStyle($this->fpdf, $style);
         Border::applyStyle($this->fpdf, $style);
         Fill::applyStyle($this->fpdf, $style);
@@ -569,10 +579,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         RectStyle::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Rect(
-            $x,
-            $y,
-            $w,
-            $h,
+            $this->parseGlobalValue_h($x),
+            $this->parseGlobalValue_v($y),
+            $this->parseGlobalValue_h($w),
+            $this->parseGlobalValue_v($h),
             RectStyle::translate($style)
         );
 
@@ -593,7 +603,12 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         // Set border (color, width) styles
         LineStyle::applyStyle($this->fpdf, $style);
 
-        $this->fpdf->Line($x1, $y1, $x2, $y2);
+        $this->fpdf->Line(
+            $this->parseGlobalValue_h($x1),
+            $this->parseGlobalValue_v($y1),
+            $this->parseGlobalValue_h($x2),
+            $this->parseGlobalValue_v($y2)
+        );
 
         return $this;
     }
@@ -615,10 +630,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     {
         $this->fpdf->Image(
             $file,
-            $x,
-            $y,
-            $w,
-            $h,
+            $this->parseGlobalValue_h($x),
+            $this->parseGlobalValue_v($y),
+            $this->parseGlobalValue_h($w),
+            $this->parseGlobalValue_v($h),
             $type,
             $link
         );
@@ -639,11 +654,53 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         FontStyle::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Write(
-            $h,
+            $this->parseGlobalValue_v($h),
             $text,
             $link
         );
 
+    }
+
+    // ======================================
+
+    /**
+     * @param float|string|null $globalValue
+     *
+     * @return float|null
+     */
+    protected function parseGlobalValue_h($globalValue)
+    {
+        return (is_string($globalValue))
+            ? $this->getInnerWidth() * floatval($globalValue) / 100
+            : $globalValue;
+    }
+
+    /**
+     * @param float|string|null $globalValue
+     *
+     * @return float|null
+     */
+    protected function parseGlobalValue_v($globalValue)
+    {
+        return (is_string($globalValue))
+            ? $this->getInnerHeight() * floatval($globalValue) / 100
+            : $globalValue;
+    }
+
+    /**
+     * @return float
+     */
+    protected function getInnerWidth()
+    {
+        return $this->getWidth() - $this->getLeftMargin() - $this->getRightMargin();
+    }
+
+    /**
+     * @return float
+     */
+    protected function getInnerHeight()
+    {
+        return $this->getHeight() - $this->getTopMargin() - $this->getBottomMargin();
     }
 
 }
