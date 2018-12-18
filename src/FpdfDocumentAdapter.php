@@ -4,7 +4,7 @@ namespace Relaxsd\Pdflax\Fpdf;
 
 use Anouar\Fpdf\Fpdf;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
-use Relaxsd\Pdflax\Fpdf\Translators\Align;
+use Relaxsd\Pdflax\Fpdf\Translators\AlignTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\Border;
 use Relaxsd\Pdflax\Fpdf\Translators\Fill;
 use Relaxsd\Pdflax\Fpdf\Translators\FontStyleTranslator;
@@ -16,6 +16,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\RectStyle;
 use Relaxsd\Pdflax\Fpdf\Translators\Size;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
+use Relaxsd\Stylesheets\Attributes\Align;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Style;
@@ -53,22 +54,22 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
                 // FPdf default for cell()
-                'align'     => 'left',
-                'border'    => 0,
-                'fill'      => 0,
-                'link'      => '',
-                'multiline' => false, // Uses Cell, not MultiCell
-                'ln'        => 0,
+                Align::ATTRIBUTE => Align::LEFT,
+                'border'         => 0,
+                'fill'           => 0,
+                'link'           => '',
+                'multiline'      => false, // Uses Cell, not MultiCell
+                'ln'             => 0,
             ],
 
             // The paragraph type.
             // Adds to 'body' and 'cell'
             'p'            => [
-                'align'     => 'left',
-                'multiline' => true, // Uses MultiCell, not Cell
+                Align::ATTRIBUTE => Align::LEFT,
+                'multiline'      => true, // Uses MultiCell, not Cell
                 // By default, FPdf always uses Ln=2 for MultiCell.
                 // TODO: 1 or 2 is important for correctly recognizing page breaks
-                'ln'        => 2,
+                'ln'             => 2,
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
@@ -76,7 +77,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 FontStyle::ATTRIBUTE => 'bold',
                 'font-size'          => 14,
                 'ln'                 => 2,
-                'align'              => 'left',
+                Align::ATTRIBUTE     => Align::LEFT,
             ],
             // Heading 2 type
             // Adds to 'body' and 'cell'
@@ -84,10 +85,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 FontStyle::ATTRIBUTE => 'bold',
                 'font-size'          => 12,
                 'ln'                 => 2,
-                'align'              => 'left',
+                Align::ATTRIBUTE     => Align::LEFT,
             ],
             '.align-right' => [
-                'align' => 'right',
+                Align::ATTRIBUTE => Align::RIGHT,
             ],
         ]));
 
@@ -552,7 +553,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 $h,
                 $txt,
                 Border::translate($style),
-                Align::translate($style),
+                AlignTranslator::translate($style),
                 Fill::translate($style)
             );
 
@@ -575,7 +576,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 $txt,
                 Border::translate($style),
                 Ln::translate($style),
-                Align::translate($style),
+                AlignTranslator::translate($style),
                 Fill::translate($style),
                 ''
             );

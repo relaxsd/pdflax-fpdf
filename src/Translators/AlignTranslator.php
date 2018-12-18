@@ -2,9 +2,10 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Relaxsd\Stylesheets\Attributes\Align;
 use Relaxsd\Stylesheets\Style;
 
-class Align
+class AlignTranslator
 {
 
     /**
@@ -14,12 +15,12 @@ class Align
      */
     public static function translate($style)
     {
-        switch (Style::value($style, 'align')) {
-            case 'left':
+        switch (Style::value($style, Align::ATTRIBUTE)) {
+            case Align::LEFT:
                 return 'L';
-            case 'center':
+            case Align::CENTER:
                 return 'C';
-            case 'right':
+            case Align::RIGHT:
                 return 'R';
             default:
                 return '';
