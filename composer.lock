@@ -374,7 +374,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.relax-software.nl:31422/git/relaxsd/pdflax.git",
-                "reference": "c275ebe0b855fa23ebfee06be048be5b1661b83b"
+                "reference": "821056ecdf82bf398291583c039802cafc0b0ed3"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -400,7 +400,7 @@
                 }
             ],
             "description": "PDF document and view wrappers for PHP.",
-            "time": "2018-12-18T13:30:29+00:00"
+            "time": "2018-12-18T23:13:24+00:00"
         },
         {
             "name": "relaxsd/php-stylesheets",
@@ -408,7 +408,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.relax-software.nl:31422/git/relaxsd/php-stylesheets.git",
-                "reference": "0fe5ccbf26324ac22ac865ce0f987f67c2fa89f9"
+                "reference": "9ac2d6cb365497df1edc194c04fa0e2af43fbfa5"
             },
             "require": {
                 "php": ">=5.4.0"
@@ -433,7 +433,7 @@
                 }
             ],
             "description": "Some stylesheet classes for PHP.",
-            "time": "2018-12-17T18:41:52+00:00"
+            "time": "2018-12-18T23:13:23+00:00"
         },
         {
             "name": "symfony/contracts",

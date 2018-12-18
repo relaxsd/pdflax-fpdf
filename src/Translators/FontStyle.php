@@ -2,8 +2,8 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
-use Relaxsd\Pdflax\Color;
 use Relaxsd\Pdflax\PdfView;
+use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Style;
 
 class FontStyle

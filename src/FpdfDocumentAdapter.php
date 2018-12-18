@@ -3,7 +3,6 @@
 namespace Relaxsd\Pdflax\Fpdf;
 
 use Anouar\Fpdf\Fpdf;
-use Relaxsd\Pdflax\Color;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Fpdf\Translators\Align;
 use Relaxsd\Pdflax\Fpdf\Translators\Border;
@@ -17,6 +16,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\RectStyle;
 use Relaxsd\Pdflax\Fpdf\Translators\Size;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
+use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Style;
 use Relaxsd\Stylesheets\Stylesheet;
 

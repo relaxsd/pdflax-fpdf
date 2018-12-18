@@ -1,10 +1,10 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Relaxsd\Pdflax\Color;
 use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Fpdf\FpdfDocumentAdapter;
 use Relaxsd\Pdflax\PdfView;
+use Relaxsd\Stylesheets\Attributes\Color;
 
 class FpdfDocumentAdapterTest extends TestCase
 {
@@ -437,7 +437,7 @@ class FpdfDocumentAdapterTest extends TestCase
         // With margins:
         $this->setFPdfMargins(1, 2, 3, 4);
 
-        $this->setFPdfCanvas(200 + 1 + 2,300 + 3 + 4); // 200x300 and margins
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
 
         // Because the call draws a cell at the current cursor,
         // the margins will have no effect.
