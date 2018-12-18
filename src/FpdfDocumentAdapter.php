@@ -7,7 +7,7 @@ use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Fpdf\Translators\Align;
 use Relaxsd\Pdflax\Fpdf\Translators\Border;
 use Relaxsd\Pdflax\Fpdf\Translators\Fill;
-use Relaxsd\Pdflax\Fpdf\Translators\FontStyle;
+use Relaxsd\Pdflax\Fpdf\Translators\FontStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\LineStyle;
 use Relaxsd\Pdflax\Fpdf\Translators\Ln;
 use Relaxsd\Pdflax\Fpdf\Translators\Multiline;
@@ -17,6 +17,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\Size;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Style;
 use Relaxsd\Stylesheets\Stylesheet;
 
@@ -44,10 +45,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
             // Inherited by all other styles
             'body'         => [
-                'font-family' => 'Arial',
-                'font-style'  => '',
-                'font-size'   => 11,
-                'text-color'  => [0, 0, 0],
+                'font-family'        => 'Arial',
+                FontStyle::ATTRIBUTE => '',
+                'font-size'          => 11,
+                'text-color'         => [0, 0, 0],
             ],
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
@@ -72,18 +73,18 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Heading 1 type
             // Adds to 'body' and 'cell'
             'h1'           => [
-                'font-style' => 'bold',
-                'font-size'  => 14,
-                'ln'         => 2,
-                'align'      => 'left',
+                FontStyle::ATTRIBUTE => 'bold',
+                'font-size'          => 14,
+                'ln'                 => 2,
+                'align'              => 'left',
             ],
             // Heading 2 type
             // Adds to 'body' and 'cell'
             'h2'           => [
-                'font-style' => 'bold',
-                'font-size'  => 12,
-                'ln'         => 2,
-                'align'      => 'left',
+                FontStyle::ATTRIBUTE => 'bold',
+                'font-size'          => 12,
+                'ln'                 => 2,
+                'align'              => 'left',
             ],
             '.align-right' => [
                 'align' => 'right',
@@ -99,11 +100,11 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      *
      * @return self
      */
-    public function setFont($family, $style = self::FONT_STYLE_NORMAL, $size = 0)
+    public function setFont($family, $style = FontStyle::FONT_STYLE_NORMAL, $size = 0)
     {
         $this->fpdf->SetFont(
             $family ?: '',
-            FontStyle::translate($style),
+            FontStyleTranslator::translate($style),
             $size ?: 0
         );
 
@@ -194,7 +195,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     {
         $this->fpdf->AddFont(
             $family,
-            FontStyle::translate($style),
+            FontStyleTranslator::translate($style),
             $filename
         );
 
@@ -536,7 +537,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         $w = $this->parseGlobalValue_h($w);
         $h = $this->parseGlobalValue_v($h);
 
-        FontStyle::applyStyle($this->fpdf, $style);
+        FontStyleTranslator::applyStyle($this->fpdf, $style);
         Border::applyStyle($this->fpdf, $style);
         Fill::applyStyle($this->fpdf, $style);
 
@@ -672,7 +673,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function write($h, $text, $link = '', $style = null)
     {
-        FontStyle::applyStyle($this->fpdf, $style);
+        FontStyleTranslator::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Write(
             $this->parseGlobalValue_v($h),

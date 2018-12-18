@@ -3,8 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Fpdf\FpdfDocumentAdapter;
-use Relaxsd\Pdflax\PdfView;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\FontStyle;
 
 class FpdfDocumentAdapterTest extends TestCase
 {
@@ -49,11 +49,11 @@ class FpdfDocumentAdapterTest extends TestCase
                 ['FAMILY', 'BIU', 5]
             );
 
-        $self = $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_NORMAL, 1);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_BOLD, 2);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_ITALIC, 3);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_UNDERLINE, 4);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', PdfView::FONT_STYLE_BOLD . PdfView::FONT_STYLE_ITALIC . PdfView::FONT_STYLE_UNDERLINE, 5);
+        $self = $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_NORMAL, 1);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_BOLD, 2);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_ITALIC, 3);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_UNDERLINE, 4);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_BOLD . FontStyle::FONT_STYLE_ITALIC . FontStyle::FONT_STYLE_UNDERLINE, 5);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 

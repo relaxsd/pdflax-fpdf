@@ -2,11 +2,11 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
-use Relaxsd\Pdflax\PdfView;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Style;
 
-class FontStyle
+class FontStyleTranslator
 {
 
     /**
@@ -18,15 +18,15 @@ class FontStyle
     {
         $result = '';
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, PdfView::FONT_STYLE_BOLD)) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::FONT_STYLE_BOLD)) {
             $result .= 'B';
         }
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, PdfView::FONT_STYLE_ITALIC)) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::FONT_STYLE_ITALIC)) {
             $result .= 'I';
         }
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, PdfView::FONT_STYLE_UNDERLINE)) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::FONT_STYLE_UNDERLINE)) {
             $result .= 'U';
         }
 
@@ -45,7 +45,7 @@ class FontStyle
 
         $fpdf->SetFont(
             Style::value($style, 'font-family', ''),
-            self::translate(Style::value($style, 'font-style', PdfView::FONT_STYLE_NORMAL)),
+            self::translate(Style::value($style, FontStyle::ATTRIBUTE, FontStyle::FONT_STYLE_NORMAL)),
             Style::value($style, 'font-size', 0)
         );
 
