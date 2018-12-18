@@ -56,9 +56,14 @@ class FPdfPdfCreator extends PdfCreator
             $fpdf->SetCompression($options['compression']);
         }
 
-        // Set leftmargin if given in the options
-        if (array_key_exists('margin-left', $options)) {
-            $fpdf->SetLeftMargin($options['margin-left']);
+        // Set margins if given in the options
+        if (array_key_exists('margins', $options)) {
+            list ($left, $right, $top, $bottom) = $options['margins'];
+            $fpdf->SetLeftMargin($left);
+            $fpdf->SetRightMargin($right);
+            $fpdf->SetTopMargin($top);
+            // FPdf has no SetBottomMargin(), the bottom margin can only be set through SetAutoPageBreak, so use $bMargin instead
+            $fpdf->bMargin = $bottom;
         }
 
         // Set leftmargin if given in the options
