@@ -2,10 +2,13 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Relaxsd\Stylesheets\Attributes\Border;
+use Relaxsd\Stylesheets\Attributes\BorderColor;
+use Relaxsd\Stylesheets\Attributes\BorderWidth;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Style;
 
-class Border
+class BorderTranslator
 {
 
     /**
@@ -21,16 +24,16 @@ class Border
 
             $result = '';
 
-            if ($style->hasValue('border-bottom') && self::parseBorder($style->getValue('border-bottom'))) {
+            if ($style->hasValue(Border::BORDER_BOTTOM) && self::parseBorder($style->getValue(Border::BORDER_BOTTOM))) {
                 $result .= 'B';
             }
-            if ($style->hasValue('border-left') && self::parseBorder($style->getValue('border-left'))) {
+            if ($style->hasValue(Border::BORDER_LEFT) && self::parseBorder($style->getValue(Border::BORDER_LEFT))) {
                 $result .= 'L';
             }
-            if ($style->hasValue('border-right') && self::parseBorder($style->getValue('border-right'))) {
+            if ($style->hasValue(Border::BORDER_RIGHT) && self::parseBorder($style->getValue(Border::BORDER_RIGHT))) {
                 $result .= 'R';
             }
-            if ($style->hasValue('border-top') && self::parseBorder($style->getValue('border-top'))) {
+            if ($style->hasValue(Border::BORDER_TOP) && self::parseBorder($style->getValue(Border::BORDER_TOP))) {
                 $result .= 'T';
             }
 
@@ -40,7 +43,7 @@ class Border
         }
 
         // Else support border (1) / no border (0)
-        return self::parseBorder(Style::value($style, 'border'));
+        return self::parseBorder(Style::value($style, Border::BORDER));
     }
 
     /**
@@ -56,10 +59,10 @@ class Border
 
             // TODO: Convert string to float etc
             // 0.2 mm is the FPdf default
-            $fpdf->SetLineWidth(Style::value($style, 'border-width', 0.2));
+            $fpdf->SetLineWidth(Style::value($style, BorderWidth::ATTRIBUTE, 0.2));
 
             // Black is the FPdf default
-            list($r, $g, $b) = Color::toRGB(Style::value($style, 'border-color', 'black'));
+            list($r, $g, $b) = Color::toRGB(Style::value($style, BorderColor::ATTRIBUTE, 'black'));
             $fpdf->SetDrawColor($r, $g, $b);
 
         }

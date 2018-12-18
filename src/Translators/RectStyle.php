@@ -2,6 +2,8 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Relaxsd\Stylesheets\Attributes\BorderColor;
+use Relaxsd\Stylesheets\Attributes\BorderWidth;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Style;
 
@@ -21,7 +23,7 @@ class RectStyle
 
         $result = '';
 
-        if ($style->hasValue('border-color') || $style->hasValue('border-size')) {
+        if ($style->hasValue(BorderColor::ATTRIBUTE) || $style->hasValue(BorderWidth::ATTRIBUTE)) {
             $result .= 'D';
         }
 
@@ -44,12 +46,12 @@ class RectStyle
         // FPdf draws a border for 'D' (draw) and '' (the default)
         if ($rectStyle == '' || str_contains($rectStyle, 'D')) {
 
-            list($r, $g, $b) = Color::toRGB(Style::value($style, 'border-color', 'black'));
+            list($r, $g, $b) = Color::toRGB(Style::value($style, BorderColor::ATTRIBUTE, 'black'));
             $fpdf->SetDrawColor($r, $g, $b);
 
             // TODO: Convert string to float etc
             // 0.2 mm is the FPdf default
-            $fpdf->SetLineWidth(Style::value($style, 'border-width', 0.2));
+            $fpdf->SetLineWidth(Style::value($style, BorderWidth::ATTRIBUTE, 0.2));
 
         }
 
