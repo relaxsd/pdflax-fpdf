@@ -64,10 +64,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body' and 'cell'
             'p'            => [
                 'align'     => 'left',
+                'multiline' => true, // Uses MultiCell, not Cell
                 // By default, FPdf always uses Ln=2 for MultiCell.
                 // TODO: 1 or 2 is important for correctly recognizing page breaks
                 'ln'        => 2,
-                'multiline' => true, // Uses MultiCell, not Cell
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
@@ -524,7 +524,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 Fill::translate($style)
             );
 
-            $ln = Ln::translate($style);
+            $ln = Ln::translate($style, 2);
 
             // MultiCell uses ln=2 (bottom left) by default
             if ($ln == 1) {

@@ -406,9 +406,14 @@ class FpdfDocumentAdapterTest extends TestCase
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $this->fpdfDocumentAdapter->cell(10, 20, 'text', ['multiline' => true]);
+        $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+            'multiline' => true,
+            'ln'        => 2 // FPdf default, should be in 2 in all styles that use multiline
+        ]);
 
-        $this->assertEquals(20, $this->fpdfMock->x);
+        // For MultiCell, ln=2 is the default, normally (x,y) would be left unchanged at (20,15),
+        // but for the mock they should be left unchanged at (10, 15)
+        $this->assertEquals(10, $this->fpdfMock->x);
         $this->assertEquals(15, $this->fpdfMock->y);
     }
 
@@ -429,14 +434,16 @@ class FpdfDocumentAdapterTest extends TestCase
         ]);
 
         $this->assertEquals(10, $this->fpdfMock->x);
-        $this->assertEquals(35, $this->fpdfMock->y);
+        // Normally y would be left unchanged at 35,
+        // but for the mock they should be left unchanged at 15.
+        $this->assertEquals(15, $this->fpdfMock->y);
 
     }
 
     /**
      * @test
      */
-    public function it_supports_bottom_right_after_a_multicell()
+    public function it_supports_top_right_after_a_multicell()
     {
 
         $this->fpdfMock
@@ -446,11 +453,12 @@ class FpdfDocumentAdapterTest extends TestCase
 
         $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
             'multiline' => true,
-            'ln'        => 2
+            'ln'        => 0
         ]);
 
+        // Make sure the cursor is reset to (20, 15)
         $this->assertEquals(20, $this->fpdfMock->x);
-        $this->assertEquals(35, $this->fpdfMock->y);
+        $this->assertEquals(15, $this->fpdfMock->y);
 
     }
 
