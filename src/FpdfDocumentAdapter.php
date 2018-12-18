@@ -262,7 +262,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function getX()
     {
-        return $this->fpdf->x;
+        return 0;
     }
 
     /**
@@ -270,11 +270,11 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function getY()
     {
-        return $this->fpdf->y;
+        return 0;
     }
 
     /**
-     * Get the width of this document in it parent.
+     * Get the total width of this document, including its left and right margins
      *
      * @return float
      */
@@ -284,7 +284,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * Get the height of this document in it parent.
+     * Get the total height of this document, including its top and bottom margins
      *
      * @return float
      */
@@ -294,11 +294,31 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
+     * Get the inner width of this document, between its left and right margins
+     *
+     * @return float
+     */
+    public function getInnerWidth()
+    {
+        return $this->fpdf->w - $this->fpdf->lMargin - $this->fpdf->rMargin;
+    }
+
+    /**
+     * Get the inner height of this document, between its top and bottom margins
+     *
+     * @return float
+     */
+    public function getInnerHeight()
+    {
+        return $this->fpdf->h - $this->fpdf->tMargin - $this->fpdf->bMargin;
+    }
+
+    /**
      * @return float
      */
     public function getCursorX()
     {
-        return $this->fpdf->GetX();
+        return $this->fpdf->GetX() - $this->fpdf->lMargin;
     }
 
     /**
@@ -306,7 +326,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function getCursorY()
     {
-        return $this->fpdf->GetY();
+        return $this->fpdf->GetY() - $this->fpdf->tMargin;
     }
 
     /**
@@ -318,8 +338,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorX($x)
     {
+        // TODO: fpdf->SetX moves the cursor from the right for negative values
         $this->fpdf->SetX(
-            $this->parseGlobalValue_h($x)
+            $this->fpdf->lMargin + $this->parseGlobalValue_h($x)
         );
 
         return $this;
@@ -334,8 +355,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorY($y)
     {
+        // TODO: fpdf->SetY moves the cursor from the bottom for negative values
         $this->fpdf->SetY(
-            $this->parseGlobalValue_v($y)
+            $this->fpdf->tMargin + $this->parseGlobalValue_v($y)
         );
 
         return $this;
@@ -351,10 +373,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorXY($x, $y)
     {
-        $this->fpdf->setXY(
-            $this->parseGlobalValue_h($x),
-            $this->parseGlobalValue_v($y)
-        );
+        $this->setCursorX($x);
+        $this->setCursorY($y);
 
         return $this;
     }
@@ -522,8 +542,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
         if (Multiline::translate($style)) {
 
-            $oldX = $this->fpdf->x;
-            $oldY = $this->fpdf->y;
+            // For Ln=0, we need to restore the cursor
+            $oldX = $this->fpdf->GetX();
+            $oldY = $this->fpdf->GetY();
 
             $this->fpdf->MultiCell(
                 $w,
@@ -539,11 +560,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // MultiCell uses ln=2 (bottom left) by default
             if ($ln == 1) {
                 // Next line
-                $this->fpdf->x = $this->fpdf->lMargin;
+                $this->fpdf->SetX($this->fpdf->lMargin);
             } else if ($ln == 0) {
                 // Top right
-                $this->fpdf->x = $oldX + $w;
-                $this->fpdf->y = $oldY;
+                $this->fpdf->SetXY($oldX + $w, $oldY);
             }
 
         } else {
@@ -579,10 +599,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         RectStyle::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Rect(
-            $this->parseGlobalValue_h($x),
-            $this->parseGlobalValue_v($y),
-            $this->parseGlobalValue_h($w),
-            $this->parseGlobalValue_v($h),
+            $this->fpdf->lMargin + $this->parseGlobalValue_h($x),
+            $this->fpdf->tMargin + $this->parseGlobalValue_v($y),
+            $this->fpdf->lMargin + $this->parseGlobalValue_h($w),
+            $this->fpdf->tMargin + $this->parseGlobalValue_v($h),
             RectStyle::translate($style)
         );
 
@@ -604,10 +624,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         LineStyle::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Line(
-            $this->parseGlobalValue_h($x1),
-            $this->parseGlobalValue_v($y1),
-            $this->parseGlobalValue_h($x2),
-            $this->parseGlobalValue_v($y2)
+            $this->fpdf->lMargin + $this->parseGlobalValue_h($x1),
+            $this->fpdf->tMargin + $this->parseGlobalValue_v($y1),
+            $this->fpdf->lMargin + $this->parseGlobalValue_h($x2),
+            $this->fpdf->tMargin + $this->parseGlobalValue_v($y2)
         );
 
         return $this;
@@ -623,15 +643,14 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      * @param string                                $link
      * @param \Relaxsd\Stylesheets\Style|array|null $style
      *
-     *
      * @return self
      */
     public function image($file, $x, $y, $w, $h, $type = '', $link = '', $style = null)
     {
         $this->fpdf->Image(
             $file,
-            $this->parseGlobalValue_h($x),
-            $this->parseGlobalValue_v($y),
+            $this->fpdf->lMargin + $this->parseGlobalValue_h($x),
+            $this->fpdf->tMargin + $this->parseGlobalValue_v($y),
             $this->parseGlobalValue_h($w),
             $this->parseGlobalValue_v($h),
             $type,
@@ -639,6 +658,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         );
 
         // TODO: Draw rect if we want a border!
+
+        return $this;
     }
 
     /**
@@ -659,6 +680,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             $link
         );
 
+        return $this;
     }
 
     // ======================================
@@ -685,22 +707,6 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         return (is_string($globalValue))
             ? $this->getInnerHeight() * floatval($globalValue) / 100
             : $globalValue;
-    }
-
-    /**
-     * @return float
-     */
-    protected function getInnerWidth()
-    {
-        return $this->getWidth() - $this->getLeftMargin() - $this->getRightMargin();
-    }
-
-    /**
-     * @return float
-     */
-    protected function getInnerHeight()
-    {
-        return $this->getHeight() - $this->getTopMargin() - $this->getBottomMargin();
     }
 
 }

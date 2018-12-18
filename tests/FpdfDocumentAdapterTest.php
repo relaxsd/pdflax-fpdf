@@ -28,8 +28,7 @@ class FpdfDocumentAdapterTest extends TestCase
         parent::setUp();
 
         $this->fpdfMock = $this->getMockBuilder('\Anouar\Fpdf\Fpdf')->getMock();
-
-        $this->setXY(10, 15);
+        $this->setFPdfMargins(0, 0, 0, 0);
 
         $this->fpdfDocumentAdapter = new FpdfDocumentAdapter($this->fpdfMock);
     }
@@ -213,10 +212,10 @@ class FpdfDocumentAdapterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_x_and_y()
+    public function it_returns_zero_for_x_and_y()
     {
-        $this->assertEquals(10, $this->fpdfDocumentAdapter->getX());
-        $this->assertEquals(15, $this->fpdfDocumentAdapter->getY());
+        $this->assertEquals(0, $this->fpdfDocumentAdapter->getX());
+        $this->assertEquals(0, $this->fpdfDocumentAdapter->getY());
     }
 
     /**
@@ -234,19 +233,32 @@ class FpdfDocumentAdapterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_the_cursor()
+    public function it_returns_cursor_x_and_y()
     {
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('GetX')
-            ->willReturn(100);
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('GetY')
-            ->willReturn(200);
+        // Without margins:
+        $this->setFPdfMargins(0, 0, 0, 0);
 
-        $this->assertEquals(100, $this->fpdfDocumentAdapter->getCursorX());
-        $this->assertEquals(200, $this->fpdfDocumentAdapter->getCursorY());
+        $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(10);
+        $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(15);
+
+        $this->assertEquals(10, $this->fpdfDocumentAdapter->getCursorX());
+        $this->assertEquals(15, $this->fpdfDocumentAdapter->getCursorY());
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_cursor_x_and_y_with_margins()
+    {
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(10);
+        $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(15);
+
+        $this->assertEquals(10 - 1, $this->fpdfDocumentAdapter->getCursorX());
+        $this->assertEquals(15 - 3, $this->fpdfDocumentAdapter->getCursorY());
     }
 
     /**
@@ -254,23 +266,38 @@ class FpdfDocumentAdapterTest extends TestCase
      */
     public function it_sets_the_cursor()
     {
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('SetX')
-            ->with(100);
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('SetY')
-            ->with(200);
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('SetXY')
-            ->with(10, 20);
+        // Without margins:
+        $this->setFPdfMargins(0, 0, 0, 0);
 
-        $self = $this->fpdfDocumentAdapter->setCursorX(100);
+        $this->fpdfMock->expects($this->exactly(2))->method('SetX')->with(10);
+        $this->fpdfMock->expects($this->exactly(2))->method('SetY')->with(20);
+
+        $self = $this->fpdfDocumentAdapter->setCursorX(10);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
-        $self = $this->fpdfDocumentAdapter->setCursorY(200);
+        $self = $this->fpdfDocumentAdapter->setCursorY(20);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        $self = $this->fpdfDocumentAdapter->setCursorXY(10, 20);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_sets_the_cursor_with_margins()
+    {
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->fpdfMock->expects($this->exactly(2))->method('SetX')->with(10 + 1);
+        $this->fpdfMock->expects($this->exactly(2))->method('SetY')->with(20 + 3);
+
+        $self = $this->fpdfDocumentAdapter->setCursorX(10);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        $self = $this->fpdfDocumentAdapter->setCursorY(20);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
         $self = $this->fpdfDocumentAdapter->setCursorXY(10, 20);
@@ -283,10 +310,8 @@ class FpdfDocumentAdapterTest extends TestCase
      */
     public function it_returns_margins()
     {
-        $this->fpdfMock->lMargin = 1;
-        $this->fpdfMock->rMargin = 2;
-        $this->fpdfMock->tMargin = 3;
-        $this->fpdfMock->bMargin = 4;
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
 
         $this->assertEquals(1, $this->fpdfDocumentAdapter->getLeftMargin());
         $this->assertEquals(2, $this->fpdfDocumentAdapter->getRightMargin());
@@ -299,23 +324,11 @@ class FpdfDocumentAdapterTest extends TestCase
      */
     public function it_sets_margins()
     {
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('SetLeftMargin')
-            ->with(1);
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('SetRightMargin')
-            ->with(2);
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('SetTopMargin')
-            ->with(3);
+        $this->fpdfMock->expects($this->once())->method('SetLeftMargin')->with(1);
+        $this->fpdfMock->expects($this->once())->method('SetRightMargin')->with(2);
+        $this->fpdfMock->expects($this->once())->method('SetTopMargin')->with(3);
         // FPdf has no SetBottomMargin(), the bottom margin can only be set through SetAutoPageBreak
-        // $this->fpdfMock
-        //     ->expects($this->once())
-        //     ->method('SetBottomMargin')
-        //     ->with(4);
+        // $this->fpdfMock->expects($this->once())->method('SetBottomMargin')->with(4);
 
         $self = $this->fpdfDocumentAdapter->setLeftMargin(1);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -391,7 +404,51 @@ class FpdfDocumentAdapterTest extends TestCase
             ->method('Cell')
             ->with(10, 20, 'text', 0, 0, 'L', false, '');
 
-        $this->fpdfDocumentAdapter->cell(10, 20, 'text');
+        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_draws_a_cell_with_margins()
+    {
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        // Because the call draws a cell at the current cursor,
+        // the margins will have no effect.
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('Cell')
+            ->with(10, 20, 'text', 0, 0, 'L', false, '');
+
+        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_draws_a_cell_with_percentages()
+    {
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->setFPdfCanvas(200 + 1 + 2,300 + 3 + 4); // 200x300 and margins
+
+        // Because the call draws a cell at the current cursor,
+        // the margins will have no effect.
+        // For the percentages, we expect 10% of the InnerWidth and 20% of the InnerHeight of the parent
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('Cell')
+            ->with(0.10 * 200, 0.20 * 300, 'text', 0, 0, 'L', false, '');
+
+        $self = $this->fpdfDocumentAdapter->cell('10%', '20%', 'text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
 
     }
 
@@ -401,20 +458,22 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_draws_a_multicell()
     {
 
+        // For Ln=2, these are called but irrelevant
+        // $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(20);
+        // $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(35);
+
         $this->fpdfMock
             ->expects($this->once())
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
             'multiline' => true,
             'ln'        => 2 // FPdf default, should be in 2 in all styles that use multiline
         ]);
 
-        // For MultiCell, ln=2 is the default, normally (x,y) would be left unchanged at (20,15),
-        // but for the mock they should be left unchanged at (10, 15)
-        $this->assertEquals(10, $this->fpdfMock->x);
-        $this->assertEquals(15, $this->fpdfMock->y);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
     }
 
     /**
@@ -423,21 +482,24 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_supports_newline_after_a_multicell()
     {
 
+        // For Ln=2, these are called but irrelevant
+        // $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(20);
+        // $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(35);
+
+        // For Ln=1, expect a newline (x=0)
+        $this->fpdfMock->expects($this->once())->method('SetX')->with(0);
+
         $this->fpdfMock
             ->expects($this->once())
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
             'multiline' => true,
             'ln'        => 1
         ]);
 
-        $this->assertEquals(10, $this->fpdfMock->x);
-        // Normally y would be left unchanged at 35,
-        // but for the mock they should be left unchanged at 15.
-        $this->assertEquals(15, $this->fpdfMock->y);
-
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
     }
 
     /**
@@ -446,19 +508,23 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_supports_top_right_after_a_multicell()
     {
 
+        $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(10);
+        $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(15);
+
+        // For Ln=0, expect a move to top-right (20, 15)
+        $this->fpdfMock->expects($this->once())->method('SetXY')->with(20, 15);
+
         $this->fpdfMock
             ->expects($this->once())
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
             'multiline' => true,
             'ln'        => 0
         ]);
 
-        // Make sure the cursor is reset to (20, 15)
-        $this->assertEquals(20, $this->fpdfMock->x);
-        $this->assertEquals(15, $this->fpdfMock->y);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
 
     }
 
@@ -473,8 +539,26 @@ class FpdfDocumentAdapterTest extends TestCase
             ->method('Rect')
             ->with(10, 20, 30, 40);
 
-        $this->fpdfDocumentAdapter->rectangle(10, 20, 30, 40);
+        $self = $this->fpdfDocumentAdapter->rectangle(10, 20, 30, 40);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
 
+    }
+
+    /**
+     * @test
+     */
+    public function it_draws_a_rect_with_margins()
+    {
+
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('Rect')
+            ->with(10 + 1, 20 + 3, 30 + 1, 40 + 3);
+
+        $self = $this->fpdfDocumentAdapter->rectangle(10, 20, 30, 40);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
     }
 
     /**
@@ -488,8 +572,25 @@ class FpdfDocumentAdapterTest extends TestCase
             ->method('Line')
             ->with(10, 20, 30, 40);
 
-        $this->fpdfDocumentAdapter->line(10, 20, 30, 40);
+        $self = $this->fpdfDocumentAdapter->line(10, 20, 30, 40);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+    }
 
+    /**
+     * @test
+     */
+    public function it_draws_a_line_with_margins()
+    {
+
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('Line')
+            ->with(10 + 1, 20 + 3, 30 + 1, 40 + 3);
+
+        $self = $this->fpdfDocumentAdapter->line(10, 20, 30, 40);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
     }
 
     /**
@@ -503,8 +604,25 @@ class FpdfDocumentAdapterTest extends TestCase
             ->method('Image')
             ->with('file', 10, 20, 30, 40, 'type', 'link');
 
-        $this->fpdfDocumentAdapter->image('file', 10, 20, 30, 40, 'type', 'link');
+        $self = $this->fpdfDocumentAdapter->image('file', 10, 20, 30, 40, 'type', 'link');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+    }
 
+    /**
+     * @test
+     */
+    public function it_draws_a_image_with_margins()
+    {
+
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('Image')
+            ->with('file', 10 + 1, 20 + 3, 30, 40, 'type', 'link');
+
+        $self = $this->fpdfDocumentAdapter->image('file', 10, 20, 30, 40, 'type', 'link');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
     }
 
     /**
@@ -518,14 +636,22 @@ class FpdfDocumentAdapterTest extends TestCase
             ->method('Write')
             ->with(10, 'text', 'link');
 
-        $this->fpdfDocumentAdapter->write(10, 'text', 'link');
-
+        $self = $this->fpdfDocumentAdapter->write(10, 'text', 'link');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
     }
 
-    protected function setXY($x, $y)
+    protected function setFPdfMargins($left, $right, $top, $bottom)
     {
-        $this->fpdfMock->x = $this->fpdfMock->lMargin = $x;
-        $this->fpdfMock->y = $y;
+        $this->fpdfMock->lMargin = $left;
+        $this->fpdfMock->rMargin = $right;
+        $this->fpdfMock->tMargin = $top;
+        $this->fpdfMock->bMargin = $bottom;
+    }
+
+    protected function setFPdfCanvas($width, $height)
+    {
+        $this->fpdfMock->w = $width;
+        $this->fpdfMock->h = $height;
     }
 
     protected function getXY()
