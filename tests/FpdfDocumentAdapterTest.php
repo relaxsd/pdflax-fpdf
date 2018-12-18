@@ -281,34 +281,56 @@ class FpdfDocumentAdapterTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_the_left_and_right_margins()
+    public function it_returns_margins()
     {
-        $this->fpdfMock->lMargin = 10;
-        $this->fpdfMock->rMargin = 190;
+        $this->fpdfMock->lMargin = 1;
+        $this->fpdfMock->rMargin = 2;
+        $this->fpdfMock->tMargin = 3;
+        $this->fpdfMock->bMargin = 4;
 
-        $this->assertEquals(10, $this->fpdfDocumentAdapter->getLeftMargin());
-        $this->assertEquals(190, $this->fpdfDocumentAdapter->getRightMargin());
+        $this->assertEquals(1, $this->fpdfDocumentAdapter->getLeftMargin());
+        $this->assertEquals(2, $this->fpdfDocumentAdapter->getRightMargin());
+        $this->assertEquals(3, $this->fpdfDocumentAdapter->getTopMargin());
+        $this->assertEquals(4, $this->fpdfDocumentAdapter->getBottomMargin());
     }
 
     /**
      * @test
      */
-    public function it_sets_the_left_and_right_margins()
+    public function it_sets_margins()
     {
         $this->fpdfMock
             ->expects($this->once())
             ->method('SetLeftMargin')
-            ->with(20);
+            ->with(1);
         $this->fpdfMock
             ->expects($this->once())
             ->method('SetRightMargin')
-            ->with(180);
+            ->with(2);
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('SetTopMargin')
+            ->with(3);
+        // FPdf has no SetBottomMargin(), the bottom margin can only be set through SetAutoPageBreak
+        // $this->fpdfMock
+        //     ->expects($this->once())
+        //     ->method('SetBottomMargin')
+        //     ->with(4);
 
-        $self = $this->fpdfDocumentAdapter->setLeftMargin(20);
+        $self = $this->fpdfDocumentAdapter->setLeftMargin(1);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
-        $self = $this->fpdfDocumentAdapter->setRightMargin(180);
+        $self = $this->fpdfDocumentAdapter->setRightMargin(2);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        $self = $this->fpdfDocumentAdapter->setTopMargin(3);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        $self = $this->fpdfDocumentAdapter->setBottomMargin(4);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        // FPdf has no SetBottomMargin(), the bottom margin can only be set through SetAutoPageBreak
+        $this->assertEquals($this->fpdfMock->bMargin, 4);
     }
 
     /**

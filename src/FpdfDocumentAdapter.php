@@ -392,6 +392,47 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
+     * @param $topMargin
+     *
+     * @return $this
+     */
+    public function setTopMargin($topMargin)
+    {
+        $this->fpdf->SetTopMargin($topMargin);
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTopMargin()
+    {
+        return $this->fpdf->tMargin;
+    }
+
+    /**
+     * @param $bottomMargin
+     *
+     * @return $this
+     */
+    public function setBottomMargin($bottomMargin)
+    {
+        // FPdf has no SetBottomMargin(), the bottom margin can only be set through SetAutoPageBreak
+        // $this->fpdf->SetBottomMargin($bottomMargin);
+        $this->fpdf->bMargin = $bottomMargin;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBottomMargin()
+    {
+        return $this->fpdf->bMargin;
+    }
+
+    /**
      * @return Fpdf
      */
     public function raw()
