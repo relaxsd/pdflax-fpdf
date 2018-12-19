@@ -2,7 +2,6 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
-use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException;
 
 class Orientation
@@ -12,7 +11,7 @@ class Orientation
      * @param int $pdflaxOrientation
      *
      * @return string
-     * @throws Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException
+     * @throws \Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException
      */
     public static function translate($pdflaxOrientation)
     {

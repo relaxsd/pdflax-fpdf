@@ -5,6 +5,7 @@ use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Fpdf\FpdfDocumentAdapter;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
+use Relaxsd\Stylesheets\Attributes\Multiline;
 
 class FpdfDocumentAdapterTest extends TestCase
 {
@@ -468,8 +469,8 @@ class FpdfDocumentAdapterTest extends TestCase
             ->with(10, 20, 'text', 0, 'L', false);
 
         $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
-            'multiline' => true,
-            'ln'        => 2 // FPdf default, should be in 2 in all styles that use multiline
+            Multiline::ATTRIBUTE => true,
+            'ln'                 => 2 // FPdf default, should be in 2 in all styles that use multiline
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -495,8 +496,8 @@ class FpdfDocumentAdapterTest extends TestCase
             ->with(10, 20, 'text', 0, 'L', false);
 
         $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
-            'multiline' => true,
-            'ln'        => 1
+            Multiline::ATTRIBUTE => true,
+            'ln'                 => 1
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -520,8 +521,8 @@ class FpdfDocumentAdapterTest extends TestCase
             ->with(10, 20, 'text', 0, 'L', false);
 
         $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
-            'multiline' => true,
-            'ln'        => 0
+            Multiline::ATTRIBUTE => true,
+            'ln'                 => 0
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);

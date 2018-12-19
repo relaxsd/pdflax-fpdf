@@ -2,19 +2,20 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Relaxsd\Stylesheets\Attributes\Multiline;
 use Relaxsd\Stylesheets\Style;
 
-class Multiline
+class MultilineTranslator
 {
 
     /**
-     * @param Style   $style
+     * @param Style $style
      *
      * @return boolean
      */
     public static function translate($style)
     {
-        return !!Style::value($style, 'multiline', false);
+        return !!Style::value($style, Multiline::ATTRIBUTE, false);
     }
 
 }

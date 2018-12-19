@@ -10,7 +10,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\FillTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\FontStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\LineStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\Ln;
-use Relaxsd\Pdflax\Fpdf\Translators\Multiline;
+use Relaxsd\Pdflax\Fpdf\Translators\MultilineTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\Orientation;
 use Relaxsd\Pdflax\Fpdf\Translators\RectStyle;
 use Relaxsd\Pdflax\Fpdf\Translators\Size;
@@ -21,6 +21,7 @@ use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\Fill;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
+use Relaxsd\Stylesheets\Attributes\Multiline;
 use Relaxsd\Stylesheets\Style;
 use Relaxsd\Stylesheets\Stylesheet;
 
@@ -56,22 +57,22 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
                 // FPdf default for cell()
-                Align::ATTRIBUTE => Align::LEFT,
-                Border::BORDER   => 0,
-                Fill::ATTRIBUTE  => Fill::NO,
-                'link'           => '',
-                'multiline'      => false, // Uses Cell, not MultiCell
-                'ln'             => 0,
+                Align::ATTRIBUTE     => Align::LEFT,
+                Border::BORDER       => 0,
+                Fill::ATTRIBUTE      => Fill::NO,
+                'link'               => '',
+                Multiline::ATTRIBUTE => false, // Uses Cell, not MultiCell
+                'ln'                 => 0,
             ],
 
             // The paragraph type.
             // Adds to 'body' and 'cell'
             'p'            => [
-                Align::ATTRIBUTE => Align::LEFT,
-                'multiline'      => true, // Uses MultiCell, not Cell
+                Align::ATTRIBUTE     => Align::LEFT,
+                Multiline::ATTRIBUTE => true, // Uses MultiCell, not Cell
                 // By default, FPdf always uses Ln=2 for MultiCell.
                 // TODO: 1 or 2 is important for correctly recognizing page breaks
-                'ln'             => 2,
+                'ln'                 => 2,
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
@@ -210,7 +211,6 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      * @param string|null $size
      *
      * @return self
-     * @throws \Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException
      */
     public function addPage($orientation = null, $size = null)
     {
@@ -544,7 +544,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         BorderTranslator::applyStyle($this->fpdf, $style);
         FillTranslator::applyStyle($this->fpdf, $style);
 
-        if (Multiline::translate($style)) {
+        if (MultilineTranslator::translate($style)) {
 
             // For Ln=0, we need to restore the cursor
             $oldX = $this->fpdf->GetX();
