@@ -2,8 +2,11 @@
 
 use PHPUnit\Framework\TestCase;
 use Relaxsd\Pdflax\Fpdf\FpdfDocumentAdapter;
+use Relaxsd\Stylesheets\Attributes\Align;
+use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\CursorPlacement;
+use Relaxsd\Stylesheets\Attributes\Fill;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Attributes\Multiline;
 use Relaxsd\Stylesheets\Attributes\PageOrientation;
@@ -402,12 +405,32 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_draws_a_cell()
     {
 
-        $this->fpdfMock
-            ->expects($this->once())
-            ->method('Cell')
-            ->with(10, 20, 'text', 0, 0, 'L', false, '');
+        $this->setFPdfCanvas(200, 300); // 200x300, no margins
 
-        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text');
+        // When asked, pretend the cursor is at (4,5)
+        $this->fpdfMock->expects($this->atLeast(1))->method('GetX')->willReturn(4);
+        $this->fpdfMock->expects($this->atLeast(1))->method('GetY')->willReturn(5);
+
+        // Our test should set the cursor at (4,5), then (6,7)
+        $this->fpdfMock->expects($this->exactly(2))->method('SetX')->withConsecutive([4], [6]);
+        $this->fpdfMock->expects($this->exactly(2))->method('SetY')->withConsecutive([5], [7]);
+
+        $this->fpdfMock
+            ->expects($this->exactly(2))
+            ->method('Cell')
+            ->withConsecutive(
+            // From (4,5) to right/bottom of page
+                [200 - 4, 300 - 5, 'text', 0, 0, 'L', false, ''],
+                // From (5,7), width 10, height 20
+                [10, 20, 'text', 0, 0, 'L', false, '']
+            );
+
+        // At cursor, to right margin and bottom margin
+        $self = $this->fpdfDocumentAdapter->cell(null, null, null, null, 'text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        // At given x, y, width, height
+        $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text');
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
     }
@@ -419,15 +442,32 @@ class FpdfDocumentAdapterTest extends TestCase
     {
         // With margins:
         $this->setFPdfMargins(1, 2, 3, 4);
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
 
-        // Because the call draws a cell at the current cursor,
-        // the margins will have no effect.
+        // When asked, pretend the cursor is at (4,5) within the margins
+        $this->fpdfMock->expects($this->atLeast(1))->method('GetX')->willReturn(4 + 1);
+        $this->fpdfMock->expects($this->atLeast(1))->method('GetY')->willReturn(5 + 3);
+
+        // Our test should set the cursor at (4,5), then (6,7) adding margins
+        $this->fpdfMock->expects($this->exactly(2))->method('SetX')->withConsecutive([4 + 1], [6 + 1]);
+        $this->fpdfMock->expects($this->exactly(2))->method('SetY')->withConsecutive([5 + 3], [7 + 3]);
+
         $this->fpdfMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('Cell')
-            ->with(10, 20, 'text', 0, 0, 'L', false, '');
+            ->withConsecutive(
+            // From (4,5) to right/bottom of page
+                [200 - 4, 300 - 5, 'text', 0, 0, 'L', false, ''],
+                // From (5,7), width 10, height 20
+                [10, 20, 'text', 0, 0, 'L', false, '']
+            );
 
-        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text');
+        // At cursor, to right margin and bottom margin
+        $self = $this->fpdfDocumentAdapter->cell(null, null, null, null, 'text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        // At given x, y, width, height
+        $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text');
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
     }
@@ -439,18 +479,19 @@ class FpdfDocumentAdapterTest extends TestCase
     {
         // With margins:
         $this->setFPdfMargins(1, 2, 3, 4);
-
         $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
 
-        // Because the call draws a cell at the current cursor,
-        // the margins will have no effect.
-        // For the percentages, we expect 10% of the InnerWidth and 20% of the InnerHeight of the parent
+        // Our test should set the cursor at (6%,7%) adding 1 and 3 units for margins
+        $this->fpdfMock->expects($this->once())->method('SetX')->with(1 + 6 / 100 * 200);
+        $this->fpdfMock->expects($this->once())->method('SetY')->with(3 + 7 / 100 * 300);
+
         $this->fpdfMock
             ->expects($this->once())
             ->method('Cell')
-            ->with(0.10 * 200, 0.20 * 300, 'text', 0, 0, 'L', false, '');
+            ->with(10 / 100 * 200, 20 / 100 * 300, 'text', 0, 0, 'L', false, '');
 
-        $self = $this->fpdfDocumentAdapter->cell('10%', '20%', 'text');
+        // At given x, y, width, height
+        $self = $this->fpdfDocumentAdapter->cell('6%', '7%', '10%', '20%', 'text');
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
     }
@@ -461,16 +502,21 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_draws_a_multicell()
     {
 
-        // For Ln=2, these are called but irrelevant
-        // $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(20);
-        // $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(35);
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
+
+        // Our test should set the cursor at (6,7) adding 1 and 3 units for margins
+        // For CURSOR_BOTTOM_LEFT, the cursor should not be moved afterwards
+        $this->fpdfMock->expects($this->once())->method('SetX')->with(1 + 6);
+        $this->fpdfMock->expects($this->once())->method('SetY')->with(3 + 7);
 
         $this->fpdfMock
             ->expects($this->once())
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+        $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text', [
             Multiline::ATTRIBUTE       => true,
             CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT // FPdf default, should be in 2 in all styles that use multiline
         ]);
@@ -485,24 +531,27 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_supports_newline_after_a_multicell()
     {
 
-        // For Ln=2, these are called but irrelevant
-        // $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(20);
-        // $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(35);
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
 
-        // For Ln=1, expect a newline (x=0)
-        $this->fpdfMock->expects($this->once())->method('SetX')->with(0);
+        // Our test should set the cursor at (6,7) adding 1 and 3 units for left/top margins
+        // For CURSOR_NEWLINE, expect a newline (x=0) adding 1 for left margin
+        $this->fpdfMock->expects($this->exactly(2))->method('SetX')->withConsecutive([1 + 6], [1 + 0]);
+        $this->fpdfMock->expects($this->once())->method('SetY')->with(3 + 7);
 
         $this->fpdfMock
             ->expects($this->once())
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+        $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text', [
             Multiline::ATTRIBUTE       => true,
             CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_NEWLINE
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
+
     }
 
     /**
@@ -511,18 +560,21 @@ class FpdfDocumentAdapterTest extends TestCase
     public function it_supports_top_right_after_a_multicell()
     {
 
-        $this->fpdfMock->expects($this->once())->method('GetX')->willReturn(10);
-        $this->fpdfMock->expects($this->once())->method('GetY')->willReturn(15);
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
 
-        // For Ln=0, expect a move to top-right (20, 15)
-        $this->fpdfMock->expects($this->once())->method('SetXY')->with(20, 15);
+        // Our test should set the cursor at (6,7) adding 1 and 3 units for left/top margins
+        // For CURSOR_TOP_RIGHT, our test should move the cursor to (16,7) adding 1 and 3 units for left/top margins
+        $this->fpdfMock->expects($this->exactly(2))->method('SetX')->withConsecutive([1 + 6], [1 + 6 + 10]);
+        $this->fpdfMock->expects($this->exactly(2))->method('SetY')->withConsecutive([3 + 7], [3 + 7 + 0]);
 
         $this->fpdfMock
             ->expects($this->once())
             ->method('MultiCell')
             ->with(10, 20, 'text', 0, 'L', false);
 
-        $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
+        $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text', [
             Multiline::ATTRIBUTE       => true,
             CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT
         ]);
@@ -642,6 +694,113 @@ class FpdfDocumentAdapterTest extends TestCase
         $self = $this->fpdfDocumentAdapter->write(10, 'text', 'link');
         $this->assertSame($this->fpdfDocumentAdapter, $self);
     }
+
+
+    // ============================= DOM
+
+    /**
+     * @test
+     */
+    public function it_writes_paragraphs()
+    {
+
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
+
+        $this->fpdfMock
+            ->expects($this->exactly(2))
+            ->method('MultiCell')
+            ->withConsecutive(
+            // Default: No border, left align, no fill
+                [200.0, 6, 'text', 0, 'L', 0],
+                // With border , right align, and fill
+                [200.0, 6, 'text', 1, 'R', 1]
+            );
+
+        // Default paragraph
+        $self = $this->fpdfDocumentAdapter->p('text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        // Paragraph with border
+        $self = $this->fpdfDocumentAdapter->p('text', [
+            Border::BORDER   => true,
+            Align::ATTRIBUTE => Align::RIGHT,
+            Fill::ATTRIBUTE  => true
+        ]);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_heading_1()
+    {
+
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
+
+        $this->fpdfMock
+            ->expects($this->exactly(2))
+            ->method('MultiCell')
+            ->withConsecutive(
+            // Default: No border, left align, no fill
+                [200.0, 8, 'text', 0, 'L', 0],
+                // With border , right align, and fill
+                [200.0, 8, 'text', 1, 'R', 1]
+            );
+
+        // Default paragraph
+        $self = $this->fpdfDocumentAdapter->h1('text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        // Paragraph with border
+        $self = $this->fpdfDocumentAdapter->h1('text', [
+            Border::BORDER   => true,
+            Align::ATTRIBUTE => Align::RIGHT,
+            Fill::ATTRIBUTE  => true
+        ]);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_heading_2()
+    {
+
+        // With margins:
+        $this->setFPdfMargins(1, 2, 3, 4);
+
+        $this->setFPdfCanvas(200 + 1 + 2, 300 + 3 + 4); // 200x300 and margins
+
+        $this->fpdfMock
+            ->expects($this->exactly(2))
+            ->method('MultiCell')
+            ->withConsecutive(
+            // Default: No border, left align, no fill
+                [200.0, 8, 'text', 0, 'L', 0],
+                // With border , right align, and fill
+                [200.0, 8, 'text', 1, 'R', 1]
+            );
+
+        // Default paragraph
+        $self = $this->fpdfDocumentAdapter->h2('text');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+        // Paragraph with border
+        $self = $this->fpdfDocumentAdapter->h2('text', [
+            Border::BORDER   => true,
+            Align::ATTRIBUTE => Align::RIGHT,
+            Fill::ATTRIBUTE  => true
+        ]);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+    }
+
+    // =============================
 
     protected function setFPdfMargins($left, $right, $top, $bottom)
     {

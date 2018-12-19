@@ -52,6 +52,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
             // Inherited by all other styles
             'body'         => [
+                Align::ATTRIBUTE      => Align::LEFT,
                 FontFamily::ATTRIBUTE => 'Arial',
                 FontStyle::ATTRIBUTE  => '',
                 FontSize::ATTRIBUTE   => 11,
@@ -60,7 +61,6 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
                 // FPdf default for cell()
-                Align::ATTRIBUTE           => Align::LEFT,
                 Border::BORDER             => false,
                 Fill::ATTRIBUTE            => false,
                 'link'                     => '',
@@ -71,27 +71,24 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // The paragraph type.
             // Adds to 'body' and 'cell'
             'p'            => [
-                Align::ATTRIBUTE           => Align::LEFT,
-                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
-                // By default, FPdf always uses Ln=2 (bottom left) for MultiCell.
-                // TODO: CURSOR_BOTTOM_* needed for correctly recognizing page breaks
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
+                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
             'h1'           => [
-                FontStyle::ATTRIBUTE       => 'bold',
-                FontSize::ATTRIBUTE        => 14,
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
-                Align::ATTRIBUTE           => Align::LEFT,
+                FontSize::ATTRIBUTE        => 14,
+                FontStyle::ATTRIBUTE       => 'bold',
+                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
             ],
             // Heading 2 type
             // Adds to 'body' and 'cell'
             'h2'           => [
-                FontStyle::ATTRIBUTE       => 'bold',
-                FontSize::ATTRIBUTE        => 12,
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
-                Align::ATTRIBUTE           => Align::LEFT,
+                FontSize::ATTRIBUTE        => 12,
+                FontStyle::ATTRIBUTE       => 'bold',
+                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
             ],
             '.align-right' => [
                 Align::ATTRIBUTE => Align::RIGHT,
@@ -529,15 +526,22 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     }
 
     /**
-     * @param float|string                          $w
-     * @param float|string                          $h
+     * @param float|string|null                     $x X position (may be percentage). If null, use current cursor position.
+     * @param float|string|null                     $y Y position (may be percentage). If null, use current cursor position.
+     * @param float|string|null                     $w Cell width  (may be percentage). If null, use right margin.
+     * @param float|string|null                     $h Cell height (may be percentage). If null, use bottom margin
      * @param string                                $txt
      * @param \Relaxsd\Stylesheets\Style|array|null $style
      *
      * @return $this
      */
-    public function cell($w, $h = 0.0, $txt = '', $style = null)
+    public function cell($x = null, $y = null, $w = null, $h = null, $txt = '', $style = null)
     {
+        if (!isset($x)) $x = $this->getCursorX();
+        if (!isset($y)) $y = $this->getCursorY();
+        if (!isset($w)) $w = $this->getInnerWidth() - $x;
+        if (!isset($h)) $h = $this->getInnerHeight() - $y;
+
         $style = Style::merged($this->getStyle('body'), $this->getStyle('cell'), $style);
 
         $w = $this->parseGlobalValue_h($w);
@@ -547,11 +551,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         BorderTranslator::applyStyle($this->fpdf, $style);
         FillTranslator::applyStyle($this->fpdf, $style);
 
-        if (MultilineTranslator::translate($style)) {
+        $this->setCursorXY($x, $y);
 
-            // For Ln=0, we need to restore the cursor
-            $oldX = $this->fpdf->GetX();
-            $oldY = $this->fpdf->GetY();
+        if (MultilineTranslator::translate($style)) {
 
             $this->fpdf->MultiCell(
                 $w,
@@ -564,13 +566,13 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
             $ln = CursorPlacementTranslator::translate($style, 2);
 
-            // MultiCell uses ln=2 (bottom left) by default
+            // MultiCell always uses ln==2 (bottom left) by default, correct for ln==0 or ln==1:
             if ($ln == 1) {
-                // Next line
-                $this->fpdf->SetX($this->fpdf->lMargin);
+                // Move cursor to left margin
+                $this->setCursorX(0);
             } else if ($ln == 0) {
-                // Top right
-                $this->fpdf->SetXY($oldX + $w, $oldY);
+                // Move cursor to top right of the cell
+                $this->setCursorXY($x + $w, $y);
             }
 
         } else {
