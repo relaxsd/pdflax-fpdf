@@ -342,10 +342,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorX($x)
     {
-        // TODO: fpdf->SetX moves the cursor from the right for negative values
-        $this->fpdf->SetX(
-            $this->fpdf->lMargin + $this->parseGlobalValue_h($x)
-        );
+        // Don't use SetX() (see setCursorY())
+        // $this->fpdf->SetX($this->fpdf->lMargin + $this->parseGlobalValue_h($x));
+        $this->fpdf->x = $this->fpdf->lMargin + $this->parseGlobalValue_h($x);
 
         return $this;
     }
@@ -359,10 +358,11 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      */
     public function setCursorY($y)
     {
-        // TODO: fpdf->SetY moves the cursor from the bottom for negative values
-        $this->fpdf->SetY(
-            $this->fpdf->tMargin + $this->parseGlobalValue_v($y)
-        );
+        // Don't use SetY():
+        //  - This also resets fpdf->x !!!
+        //  - fpdf->SetY moves the cursor from the bottom for negative values
+        // $this->fpdf->SetY($this->fpdf->tMargin + $this->parseGlobalValue_v($y));
+        $this->fpdf->y = $this->fpdf->tMargin + $this->parseGlobalValue_v($y);
 
         return $this;
     }
