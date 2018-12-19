@@ -8,7 +8,7 @@ use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\FillColor;
 use Relaxsd\Stylesheets\Style;
 
-class RectStyle
+class RectStyleTranslator
 {
 
     /**

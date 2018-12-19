@@ -12,7 +12,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\LineStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\Ln;
 use Relaxsd\Pdflax\Fpdf\Translators\MultilineTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\OrientationTranslator;
-use Relaxsd\Pdflax\Fpdf\Translators\RectStyle;
+use Relaxsd\Pdflax\Fpdf\Translators\RectStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\PageSizeTranslator;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
@@ -600,14 +600,14 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     public function rectangle($x, $y, $w, $h, $style = null)
     {
         // Set border (color, width) and fill styles
-        RectStyle::applyStyle($this->fpdf, $style);
+        RectStyleTranslator::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Rect(
             $this->fpdf->lMargin + $this->parseGlobalValue_h($x),
             $this->fpdf->tMargin + $this->parseGlobalValue_v($y),
             $this->fpdf->lMargin + $this->parseGlobalValue_h($w),
             $this->fpdf->tMargin + $this->parseGlobalValue_v($h),
-            RectStyle::translate($style)
+            RectStyleTranslator::translate($style)
         );
 
         return $this;
