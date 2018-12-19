@@ -21,6 +21,7 @@ use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\CursorPlacement;
 use Relaxsd\Stylesheets\Attributes\Fill;
+use Relaxsd\Stylesheets\Attributes\FontFamily;
 use Relaxsd\Stylesheets\Attributes\FontSize;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Attributes\Multiline;
@@ -51,10 +52,10 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
             // Inherited by all other styles
             'body'         => [
-                'font-family'        => 'Arial',
-                FontStyle::ATTRIBUTE => '',
-                FontSize::ATTRIBUTE  => 11,
-                'text-color'         => [0, 0, 0],
+                FontFamily::ATTRIBUTE => 'Arial',
+                FontStyle::ATTRIBUTE  => '',
+                FontSize::ATTRIBUTE   => 11,
+                'text-color'          => [0, 0, 0],
             ],
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
