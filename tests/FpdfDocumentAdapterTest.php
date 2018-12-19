@@ -1,9 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Fpdf\FpdfDocumentAdapter;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\CursorPlacement;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Attributes\Multiline;
 use Relaxsd\Stylesheets\Attributes\PageOrientation;
@@ -471,8 +471,8 @@ class FpdfDocumentAdapterTest extends TestCase
             ->with(10, 20, 'text', 0, 'L', false);
 
         $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
-            Multiline::ATTRIBUTE => true,
-            'ln'                 => 2 // FPdf default, should be in 2 in all styles that use multiline
+            Multiline::ATTRIBUTE       => true,
+            CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT // FPdf default, should be in 2 in all styles that use multiline
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -498,8 +498,8 @@ class FpdfDocumentAdapterTest extends TestCase
             ->with(10, 20, 'text', 0, 'L', false);
 
         $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
-            Multiline::ATTRIBUTE => true,
-            'ln'                 => 1
+            Multiline::ATTRIBUTE       => true,
+            CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_NEWLINE
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -523,8 +523,8 @@ class FpdfDocumentAdapterTest extends TestCase
             ->with(10, 20, 'text', 0, 'L', false);
 
         $self = $this->fpdfDocumentAdapter->cell(10, 20, 'text', [
-            Multiline::ATTRIBUTE => true,
-            'ln'                 => 0
+            Multiline::ATTRIBUTE       => true,
+            CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);

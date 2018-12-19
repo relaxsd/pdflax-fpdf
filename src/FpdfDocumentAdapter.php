@@ -6,19 +6,20 @@ use Anouar\Fpdf\Fpdf;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Fpdf\Translators\AlignTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\BorderTranslator;
+use Relaxsd\Pdflax\Fpdf\Translators\CursorPlacementTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\FillTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\FontStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\LineStyleTranslator;
-use Relaxsd\Pdflax\Fpdf\Translators\Ln;
 use Relaxsd\Pdflax\Fpdf\Translators\MultilineTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\OrientationTranslator;
-use Relaxsd\Pdflax\Fpdf\Translators\RectStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\PageSizeTranslator;
+use Relaxsd\Pdflax\Fpdf\Translators\RectStyleTranslator;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
 use Relaxsd\Stylesheets\Attributes\Align;
 use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\CursorPlacement;
 use Relaxsd\Stylesheets\Attributes\Fill;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Attributes\Multiline;
@@ -57,38 +58,38 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
                 // FPdf default for cell()
-                Align::ATTRIBUTE     => Align::LEFT,
-                Border::BORDER       => 0,
-                Fill::ATTRIBUTE      => Fill::NO,
-                'link'               => '',
-                Multiline::ATTRIBUTE => false, // Uses Cell, not MultiCell
-                'ln'                 => 0,
+                Align::ATTRIBUTE           => Align::LEFT,
+                Border::BORDER             => 0,
+                Fill::ATTRIBUTE            => Fill::NO,
+                'link'                     => '',
+                Multiline::ATTRIBUTE       => false, // Uses Cell, not MultiCell
+                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT,
             ],
 
             // The paragraph type.
             // Adds to 'body' and 'cell'
             'p'            => [
-                Align::ATTRIBUTE     => Align::LEFT,
-                Multiline::ATTRIBUTE => true, // Uses MultiCell, not Cell
-                // By default, FPdf always uses Ln=2 for MultiCell.
-                // TODO: 1 or 2 is important for correctly recognizing page breaks
-                'ln'                 => 2,
+                Align::ATTRIBUTE           => Align::LEFT,
+                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
+                // By default, FPdf always uses Ln=2 (bottom left) for MultiCell.
+                // TODO: CURSOR_BOTTOM_* needed for correctly recognizing page breaks
+                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
             'h1'           => [
-                FontStyle::ATTRIBUTE => 'bold',
-                'font-size'          => 14,
-                'ln'                 => 2,
-                Align::ATTRIBUTE     => Align::LEFT,
+                FontStyle::ATTRIBUTE       => 'bold',
+                'font-size'                => 14,
+                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
+                Align::ATTRIBUTE           => Align::LEFT,
             ],
             // Heading 2 type
             // Adds to 'body' and 'cell'
             'h2'           => [
-                FontStyle::ATTRIBUTE => 'bold',
-                'font-size'          => 12,
-                'ln'                 => 2,
-                Align::ATTRIBUTE     => Align::LEFT,
+                FontStyle::ATTRIBUTE       => 'bold',
+                'font-size'                => 12,
+                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
+                Align::ATTRIBUTE           => Align::LEFT,
             ],
             '.align-right' => [
                 Align::ATTRIBUTE => Align::RIGHT,
@@ -559,7 +560,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 FillTranslator::translate($style)
             );
 
-            $ln = Ln::translate($style, 2);
+            $ln = CursorPlacementTranslator::translate($style, 2);
 
             // MultiCell uses ln=2 (bottom left) by default
             if ($ln == 1) {
@@ -577,7 +578,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 $h,
                 $txt,
                 BorderTranslator::translate($style),
-                Ln::translate($style),
+                CursorPlacementTranslator::translate($style),
                 AlignTranslator::translate($style),
                 FillTranslator::translate($style),
                 ''
