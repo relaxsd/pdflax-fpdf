@@ -5,6 +5,7 @@ namespace Relaxsd\Pdflax\Fpdf\Translators;
 use Relaxsd\Stylesheets\Attributes\BorderColor;
 use Relaxsd\Stylesheets\Attributes\BorderWidth;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\FillColor;
 use Relaxsd\Stylesheets\Style;
 
 class RectStyle
@@ -27,7 +28,7 @@ class RectStyle
             $result .= 'D';
         }
 
-        if ($style->hasValue('fill-color')) {
+        if ($style->hasValue(FillColor::ATTRIBUTE)) {
             $result .= 'F';
         }
 
@@ -59,7 +60,7 @@ class RectStyle
         if (str_contains($rectStyle, 'F')) {
 
             // Black is the FPdf default
-            list($r, $g, $b) = Color::toRGB(Style::value($style, 'fill-color', 'black'));
+            list($r, $g, $b) = Color::toRGB(Style::value($style, FillColor::ATTRIBUTE, 'black'));
             $fpdf->SetFillColor($r, $g, $b);
 
         }

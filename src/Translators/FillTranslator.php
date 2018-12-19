@@ -3,9 +3,11 @@
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\Fill;
+use Relaxsd\Stylesheets\Attributes\FillColor;
 use Relaxsd\Stylesheets\Style;
 
-class Fill
+class FillTranslator
 {
 
     /**
@@ -15,7 +17,7 @@ class Fill
      */
     public static function translate($style)
     {
-        return Style::value($style, 'fill-color') ? 1 : 0;
+        return Style::value($style, Fill::ATTRIBUTE) ? 1 : 0;
     }
 
     /**
@@ -28,7 +30,7 @@ class Fill
         if (self::translate($style)) {
 
             // Black is the FPdf default
-            list($r, $g, $b) = Color::toRGB(Style::value($style, 'fill-color', 'black'));
+            list($r, $g, $b) = Color::toRGB(Style::value($style, FillColor::ATTRIBUTE, 'black'));
             $fpdf->SetFillColor($r, $g, $b);
 
         }

@@ -6,7 +6,7 @@ use Anouar\Fpdf\Fpdf;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Fpdf\Translators\AlignTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\BorderTranslator;
-use Relaxsd\Pdflax\Fpdf\Translators\Fill;
+use Relaxsd\Pdflax\Fpdf\Translators\FillTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\FontStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\LineStyle;
 use Relaxsd\Pdflax\Fpdf\Translators\Ln;
@@ -19,6 +19,7 @@ use Relaxsd\Pdflax\PdfStyleTrait;
 use Relaxsd\Stylesheets\Attributes\Align;
 use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\Fill;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Style;
 use Relaxsd\Stylesheets\Stylesheet;
@@ -57,7 +58,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 // FPdf default for cell()
                 Align::ATTRIBUTE => Align::LEFT,
                 Border::BORDER   => 0,
-                'fill'           => 0,
+                Fill::ATTRIBUTE  => Fill::NO,
                 'link'           => '',
                 'multiline'      => false, // Uses Cell, not MultiCell
                 'ln'             => 0,
@@ -541,7 +542,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
         FontStyleTranslator::applyStyle($this->fpdf, $style);
         BorderTranslator::applyStyle($this->fpdf, $style);
-        Fill::applyStyle($this->fpdf, $style);
+        FillTranslator::applyStyle($this->fpdf, $style);
 
         if (Multiline::translate($style)) {
 
@@ -555,7 +556,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 $txt,
                 BorderTranslator::translate($style),
                 AlignTranslator::translate($style),
-                Fill::translate($style)
+                FillTranslator::translate($style)
             );
 
             $ln = Ln::translate($style, 2);
@@ -578,7 +579,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 BorderTranslator::translate($style),
                 Ln::translate($style),
                 AlignTranslator::translate($style),
-                Fill::translate($style),
+                FillTranslator::translate($style),
                 ''
             );
 
