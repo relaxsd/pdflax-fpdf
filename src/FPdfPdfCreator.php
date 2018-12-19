@@ -6,6 +6,7 @@ use Anouar\Fpdf\Fpdf;
 use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Creator\PdfCreator;
+use Relaxsd\Stylesheets\Attributes\PageOrientation;
 
 class FPdfPdfCreator extends PdfCreator
 {
@@ -13,21 +14,21 @@ class FPdfPdfCreator extends PdfCreator
     // Maps PdfCreator options to the corresponding FPdf values
     private static $OPTION_MAPPINGS = [
         // Orientation
-        PdfCreatorOptionsInterface::ORIENTATION_LANDSCAPE => 'L',
-        PdfCreatorOptionsInterface::ORIENTATION_PORTRAIT  => 'P',
+        PageOrientation::LANDSCAPE            => 'L',
+        PageOrientation::PORTRAIT             => 'P',
 
         // Size
-        PdfCreatorOptionsInterface::SIZE_A4               => 'A4',
+        PdfCreatorOptionsInterface::SIZE_A4   => 'A4',
 
         // Units
-        PdfCreatorOptionsInterface::UNIT_CM               => 'cm',
-        PdfCreatorOptionsInterface::UNIT_INCH             => 'in',
-        PdfCreatorOptionsInterface::UNIT_MM               => 'mm',
-        PdfCreatorOptionsInterface::UNIT_PT               => 'pt',
+        PdfCreatorOptionsInterface::UNIT_CM   => 'cm',
+        PdfCreatorOptionsInterface::UNIT_INCH => 'in',
+        PdfCreatorOptionsInterface::UNIT_MM   => 'mm',
+        PdfCreatorOptionsInterface::UNIT_PT   => 'pt',
     ];
 
     protected static $DEFAULTS = [
-        'orientation' => PdfCreatorOptionsInterface::ORIENTATION_PORTRAIT,
+        'orientation' => PageOrientation::PORTRAIT,
         'unit'        => PdfCreatorOptionsInterface::UNIT_MM,
         'size'        => PdfCreatorOptionsInterface::SIZE_A4,
         'compression' => true,

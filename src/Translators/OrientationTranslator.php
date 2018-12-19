@@ -3,8 +3,9 @@
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
 use Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException;
+use Relaxsd\Stylesheets\Attributes\PageOrientation;
 
-class Orientation
+class OrientationTranslator
 {
 
     /**
@@ -17,9 +18,9 @@ class Orientation
     {
         if (!$pdflaxOrientation) {
             return '';
-        } elseif ($pdflaxOrientation == PdfCreatorOptionsInterface::ORIENTATION_LANDSCAPE) {
+        } elseif ($pdflaxOrientation == PageOrientation::LANDSCAPE) {
             return 'L';
-        } elseif ($pdflaxOrientation == PdfCreatorOptionsInterface::ORIENTATION_PORTRAIT) {
+        } elseif ($pdflaxOrientation == PageOrientation::PORTRAIT) {
             return 'P';
         }
 

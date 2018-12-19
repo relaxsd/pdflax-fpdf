@@ -6,6 +6,7 @@ use Relaxsd\Pdflax\Fpdf\FpdfDocumentAdapter;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Attributes\Multiline;
+use Relaxsd\Stylesheets\Attributes\PageOrientation;
 
 class FpdfDocumentAdapterTest extends TestCase
 {
@@ -148,9 +149,9 @@ class FpdfDocumentAdapterTest extends TestCase
             );
 
         $self = $this->fpdfDocumentAdapter->addPage();
-        $this->fpdfDocumentAdapter->addPage(PdfCreatorOptionsInterface::ORIENTATION_LANDSCAPE);
+        $this->fpdfDocumentAdapter->addPage(PageOrientation::LANDSCAPE);
         $this->fpdfDocumentAdapter->addPage(null, PdfCreatorOptionsInterface::SIZE_A4);
-        $this->fpdfDocumentAdapter->addPage(PdfCreatorOptionsInterface::ORIENTATION_PORTRAIT, [100, 200]);
+        $this->fpdfDocumentAdapter->addPage(PageOrientation::PORTRAIT, [100, 200]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
