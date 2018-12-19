@@ -3,6 +3,7 @@
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\FontSize;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Style;
 
@@ -46,7 +47,7 @@ class FontStyleTranslator
         $fpdf->SetFont(
             Style::value($style, 'font-family', ''),
             self::translate(Style::value($style, FontStyle::ATTRIBUTE, FontStyle::FONT_STYLE_NORMAL)),
-            Style::value($style, 'font-size', 0)
+            Style::value($style, FontSize::ATTRIBUTE, 0)
         );
 
     }

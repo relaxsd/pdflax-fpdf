@@ -21,6 +21,7 @@ use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\CursorPlacement;
 use Relaxsd\Stylesheets\Attributes\Fill;
+use Relaxsd\Stylesheets\Attributes\FontSize;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
 use Relaxsd\Stylesheets\Attributes\Multiline;
 use Relaxsd\Stylesheets\Style;
@@ -52,14 +53,14 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             'body'         => [
                 'font-family'        => 'Arial',
                 FontStyle::ATTRIBUTE => '',
-                'font-size'          => 11,
+                FontSize::ATTRIBUTE  => 11,
                 'text-color'         => [0, 0, 0],
             ],
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
                 // FPdf default for cell()
                 Align::ATTRIBUTE           => Align::LEFT,
-                Border::BORDER             => 0,
+                Border::BORDER             => false,
                 Fill::ATTRIBUTE            => Fill::NO,
                 'link'                     => '',
                 Multiline::ATTRIBUTE       => false, // Uses Cell, not MultiCell
@@ -79,7 +80,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body' and 'cell'
             'h1'           => [
                 FontStyle::ATTRIBUTE       => 'bold',
-                'font-size'                => 14,
+                FontSize::ATTRIBUTE        => 14,
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
                 Align::ATTRIBUTE           => Align::LEFT,
             ],
@@ -87,7 +88,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Adds to 'body' and 'cell'
             'h2'           => [
                 FontStyle::ATTRIBUTE       => 'bold',
-                'font-size'                => 12,
+                FontSize::ATTRIBUTE        => 12,
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
                 Align::ATTRIBUTE           => Align::LEFT,
             ],
