@@ -62,7 +62,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 // FPdf default for cell()
                 Align::ATTRIBUTE           => Align::LEFT,
                 Border::BORDER             => false,
-                Fill::ATTRIBUTE            => Fill::NO,
+                Fill::ATTRIBUTE            => false,
                 'link'                     => '',
                 Multiline::ATTRIBUTE       => false, // Uses Cell, not MultiCell
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT,
