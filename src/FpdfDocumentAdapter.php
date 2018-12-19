@@ -8,7 +8,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\AlignTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\BorderTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\FillTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\FontStyleTranslator;
-use Relaxsd\Pdflax\Fpdf\Translators\LineStyle;
+use Relaxsd\Pdflax\Fpdf\Translators\LineStyleTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\Ln;
 use Relaxsd\Pdflax\Fpdf\Translators\Multiline;
 use Relaxsd\Pdflax\Fpdf\Translators\Orientation;
@@ -625,7 +625,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     public function line($x1, $y1, $x2, $y2, $style = null)
     {
         // Set border (color, width) styles
-        LineStyle::applyStyle($this->fpdf, $style);
+        LineStyleTranslator::applyStyle($this->fpdf, $style);
 
         $this->fpdf->Line(
             $this->fpdf->lMargin + $this->parseGlobalValue_h($x1),

@@ -7,7 +7,7 @@ use Relaxsd\Stylesheets\Attributes\BorderWidth;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Style;
 
-class LineStyle
+class LineStyleTranslator
 {
 
     /**
