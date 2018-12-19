@@ -13,7 +13,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\Ln;
 use Relaxsd\Pdflax\Fpdf\Translators\MultilineTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\OrientationTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\RectStyle;
-use Relaxsd\Pdflax\Fpdf\Translators\Size;
+use Relaxsd\Pdflax\Fpdf\Translators\PageSizeTranslator;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
 use Relaxsd\Stylesheets\Attributes\Align;
@@ -216,7 +216,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
     {
         $this->fpdf->AddPage(
             OrientationTranslator::translate($orientation),
-            Size::translate($size)
+            PageSizeTranslator::translate($size)
         );
 
         return $this;

@@ -7,6 +7,7 @@ use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Creator\PdfCreator;
 use Relaxsd\Stylesheets\Attributes\PageOrientation;
+use Relaxsd\Stylesheets\Attributes\PageSize;
 
 class FPdfPdfCreator extends PdfCreator
 {
@@ -18,7 +19,7 @@ class FPdfPdfCreator extends PdfCreator
         PageOrientation::PORTRAIT             => 'P',
 
         // Size
-        PdfCreatorOptionsInterface::SIZE_A4   => 'A4',
+        PageSize::A4                          => 'A4',
 
         // Units
         PdfCreatorOptionsInterface::UNIT_CM   => 'cm',
@@ -30,7 +31,7 @@ class FPdfPdfCreator extends PdfCreator
     protected static $DEFAULTS = [
         'orientation' => PageOrientation::PORTRAIT,
         'unit'        => PdfCreatorOptionsInterface::UNIT_MM,
-        'size'        => PdfCreatorOptionsInterface::SIZE_A4,
+        'size'        => PageSize::A4,
         'compression' => true,
     ];
 

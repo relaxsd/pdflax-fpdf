@@ -2,10 +2,10 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
-use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Exceptions\UnsupportedFeatureException;
+use Relaxsd\Stylesheets\Attributes\PageSize;
 
-class Size
+class PageSizeTranslator
 {
 
     /**
@@ -21,7 +21,7 @@ class Size
         } elseif (is_array($size)) {
             return $size;
 
-        } elseif ($size == PdfCreatorOptionsInterface::SIZE_A4) {
+        } elseif ($size == PageSize::A4) {
             return 'A4';
 
         }
