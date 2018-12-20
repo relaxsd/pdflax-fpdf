@@ -308,16 +308,16 @@ class FpdfDocumentAdapterTest extends TestCase
 
         $self = $this->fpdfDocumentAdapter->setCursorX(10);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
-        $this->assertEquals(10+1, $this->fpdfMock->x);
+        $this->assertEquals(10 + 1, $this->fpdfMock->x);
 
         $self = $this->fpdfDocumentAdapter->setCursorY(20);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
-        $this->assertEquals(20+3, $this->fpdfMock->y);
+        $this->assertEquals(20 + 3, $this->fpdfMock->y);
 
         $self = $this->fpdfDocumentAdapter->setCursorXY(30, 40);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
-        $this->assertEquals(30+1, $this->fpdfMock->x);
-        $this->assertEquals(40+3, $this->fpdfMock->y);
+        $this->assertEquals(30 + 1, $this->fpdfMock->x);
+        $this->assertEquals(40 + 3, $this->fpdfMock->y);
 
     }
 
@@ -472,13 +472,13 @@ class FpdfDocumentAdapterTest extends TestCase
         $self = $this->fpdfDocumentAdapter->cell(null, null, null, null, 'text');
         $this->assertSame($this->fpdfDocumentAdapter, $self);
         // Our test should set the cursor at (4,5) adding margins
-        $this->assertEquals([4+1, 5+3], [$this->fpdfMock->x, $this->fpdfMock->y]);
+        $this->assertEquals([4 + 1, 5 + 3], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
         // At given x, y, width, height
         $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text');
         $this->assertSame($this->fpdfDocumentAdapter, $self);
         // Our test should set the cursor at (6,7) adding margins
-        $this->assertEquals([6+1, 7+3], [$this->fpdfMock->x, $this->fpdfMock->y]);
+        $this->assertEquals([6 + 1, 7 + 3], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
     }
 
@@ -593,6 +593,31 @@ class FpdfDocumentAdapterTest extends TestCase
 
         // For CURSOR_TOP_RIGHT, our test should move the cursor to (16,7) adding 1 and 3 units for left/top margins
         $this->assertEquals([1 + 16, 3 + 7], [$this->fpdfMock->x, $this->fpdfMock->y]);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_outputs_text()
+    {
+
+        // This test should set the text color and the font
+        $this->fpdfMock->expects($this->once())->method('SetTextColor')->with(255, 0, 0);
+        $this->fpdfMock->expects($this->once())->method('SetFont')->with('family', 'B', 10);
+        // This test should call Write() on FPdf
+        $this->fpdfMock->expects($this->once())->method('Write')->with(10, 'text', 'url');
+
+        // At cursor, to right margin and bottom margin
+        $self = $this->fpdfDocumentAdapter->text(10, 'text', [
+            'text-color'  => 'red',
+            'font-family' => 'family',
+            'font-style'  => 'bold',
+            'font-size'   => 10
+        ], ['href' => 'url']);
+
+        // Assert fluent interface
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
 
     }
 
@@ -811,6 +836,49 @@ class FpdfDocumentAdapterTest extends TestCase
             Fill::ATTRIBUTE  => true
         ]);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_anchors()
+    {
+
+        // This test should set the text color and the font
+        $this->fpdfMock->expects($this->once())->method('SetTextColor')->with(0, 0, 0);
+        $this->fpdfMock->expects($this->once())->method('SetFont')->with('Arial', '', 11);
+
+        // This test should call Write() on FPdf
+        $this->fpdfMock->expects($this->once())->method('Write')->with(6, 'text', 'url');
+
+        // Default anchor
+        $self = $this->fpdfDocumentAdapter->a('text', 'url');
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_anchor_with_styling()
+    {
+
+        // This test should set the text color and the font
+        $this->fpdfMock->expects($this->once())->method('SetTextColor')->with(255, 0, 0);
+        $this->fpdfMock->expects($this->once())->method('SetFont')->with('family', 'B', 10);
+
+        // This test should call Write() on FPdf
+        $this->fpdfMock->expects($this->once())->method('Write')->with(6, 'text', 'url');
+
+        // Anchor with styling
+        $self = $this->fpdfDocumentAdapter->a('text', 'url', [
+            'text-color'  => 'red',
+            'font-family' => 'family',
+            'font-style'  => 'bold',
+            'font-size'   => 10
+        ]);
+        $this->assertSame($this->fpdfDocumentAdapter, $self);
+
     }
 
     // =============================

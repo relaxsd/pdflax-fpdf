@@ -68,6 +68,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT,
             ],
 
+            // Adds to 'body'.
+            'text'         => [],
+
             // The paragraph type.
             // Adds to 'body' and 'cell'
             'p'            => [
@@ -525,6 +528,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         // TODO: Implement moveCursorY() method.
     }
 
+    // ======================= output
+
     /**
      * @param float|string|null                     $x X position (may be percentage). If null, use current cursor position.
      * @param float|string|null                     $y Y position (may be percentage). If null, use current cursor position.
@@ -592,6 +597,27 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
         return $this;
     }
+
+    public function text($h = null, $txt = '', $style = null, $options = [])
+    {
+        $style = Style::merged($this->getStyle('body'), $this->getStyle('text'), $style);
+
+        FontStyleTranslator::applyStyle($this->fpdf, $style);
+
+        $link = array_key_exists('href', $options) ? $options['href'] : '';
+
+        $this->fpdf->Write(
+            $this->parseGlobalValue_v($h),
+            $txt,
+            $link
+        );
+
+        return $this;
+
+    }
+
+
+    // ===========================================
 
     /**
      * @param float|string                          $x
