@@ -610,8 +610,8 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         $this->fpdf->Rect(
             $this->fpdf->lMargin + $this->parseGlobalValue_h($x),
             $this->fpdf->tMargin + $this->parseGlobalValue_v($y),
-            $this->fpdf->lMargin + $this->parseGlobalValue_h($w),
-            $this->fpdf->tMargin + $this->parseGlobalValue_v($h),
+            $this->parseGlobalValue_h($w),
+            $this->parseGlobalValue_v($h),
             RectStyleTranslator::translate($style)
         );
 

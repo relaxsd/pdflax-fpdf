@@ -623,7 +623,7 @@ class FpdfDocumentAdapterTest extends TestCase
         $this->fpdfMock
             ->expects($this->once())
             ->method('Rect')
-            ->with(10 + 1, 20 + 3, 30 + 1, 40 + 3);
+            ->with(10 + 1, 20 + 3, 30, 40);
 
         $self = $this->fpdfDocumentAdapter->rectangle(10, 20, 30, 40);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
