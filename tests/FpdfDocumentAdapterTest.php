@@ -507,6 +507,21 @@ class FpdfDocumentAdapterTest extends TestCase
     /**
      * @test
      */
+    public function it_draws_a_cell_with_hyperlinks()
+    {
+
+        $this->fpdfMock
+            ->expects($this->once())
+            ->method('Cell')
+            ->with($this->anything(), $this->anything(), 'text', 0, 0, 'L', false, 'URL');
+
+        $this->fpdfDocumentAdapter->cell(null, null, null, null, 'text', null, ['href' => 'URL']);
+
+    }
+
+    /**
+     * @test
+     */
     public function it_draws_a_multicell()
     {
 

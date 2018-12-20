@@ -537,10 +537,11 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      * @param float|string|null                     $h Cell height (may be percentage). If null, use bottom margin
      * @param string                                $txt
      * @param \Relaxsd\Stylesheets\Style|array|null $style
+     * @param array                                 $options
      *
      * @return $this
      */
-    public function cell($x = null, $y = null, $w = null, $h = null, $txt = '', $style = null)
+    public function cell($x = null, $y = null, $w = null, $h = null, $txt = '', $style = null, $options = [])
     {
         if (!isset($x)) $x = $this->getCursorX();
         if (!isset($y)) $y = $this->getCursorY();
@@ -582,6 +583,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
         } else {
 
+            // FPds has hyperlink support for cells
+            $link = array_key_exists('href', $options) ? $options['href'] : '';
+
             $this->fpdf->Cell(
                 $w,
                 $h,
@@ -590,7 +594,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 CursorPlacementTranslator::translate($style),
                 AlignTranslator::translate($style),
                 FillTranslator::translate($style),
-                ''
+                $link
             );
 
         }
