@@ -10,12 +10,15 @@
     }
   ],
   "require": {
-    "anouar/fpdf": "1.0.1",
-    "relaxsd/pdflax": "dev-master"
+    "anouar/fpdf": ">=1.0.1",
+    "relaxsd/pdflax": "^0.8.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4"
   },
   "autoload": {
     "psr-4": {
-      "Pdflax\\Fpdf\\": "src/Fpdf"
+      "Relaxsd\\Pdflax\\Fpdf\\": "src"
     }
   }
 }
