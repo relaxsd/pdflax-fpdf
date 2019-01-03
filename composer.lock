@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ac0d2ded8f4b6cf323fccbd78864f7e",
+    "content-hash": "677f18262d8a6a0b505cb5c8486a0d02",
     "packages": [
         {
             "name": "anouar/fpdf",
@@ -370,26 +370,37 @@
         },
         {
             "name": "relaxsd/pdflax",
-            "version": "v0.8.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.relax-software.nl:31422/git/relaxsd/pdflax.git",
-                "reference": "6c576a32dd6a9d6790c2c6df2c05a4f4ac511709"
+                "url": "https://github.com/relaxsd/pdflax.git",
+                "reference": "16b5f19cda169e8fe3003f4adfada716a723c09f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/relaxsd/pdflax/zipball/16b5f19cda169e8fe3003f4adfada716a723c09f",
+                "reference": "16b5f19cda169e8fe3003f4adfada716a723c09f",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0",
-                "relaxsd/php-stylesheets": "^2.0.0"
+                "relaxsd/php-stylesheets": "^2.1@dev"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.9-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Relaxsd\\Pdflax\\": "src"
                 }
             },
-            "notification-url": "https://packagist.relax-software.nl/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -400,20 +411,20 @@
                 }
             ],
             "description": "PDF document and view wrappers for PHP.",
-            "time": "2019-01-03T14:57:42+00:00"
+            "time": "2019-01-03T21:25:14+00:00"
         },
         {
             "name": "relaxsd/php-stylesheets",
-            "version": "v2.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/relaxsd/php-stylesheets.git",
+                "url": "ssh://git@git.relax-software.nl:31422/git/relaxsd/php-stylesheets.git",
                 "reference": "a1472daa479474aeba21dc8895487e5ee864e67c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/relaxsd/php-stylesheets/zipball/a1472daa479474aeba21dc8895487e5ee864e67c",
-                "reference": "a1472daa479474aeba21dc8895487e5ee864e67c",
+                "url": "https://api.github.com/repos/relaxsd/php-stylesheets/zipball/4f8451a659fc27ab2185e710797074074e6716a4",
+                "reference": "4f8451a659fc27ab2185e710797074074e6716a4",
                 "shasum": ""
             },
             "require": {
@@ -423,6 +434,11 @@
                 "phpunit/phpunit": "^4"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Relaxsd\\Stylesheets\\": "src/"
@@ -1831,7 +1847,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "relaxsd/pdflax": 20,
+        "relaxsd/php-stylesheets": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
