@@ -18,11 +18,11 @@ class CursorPlacementTranslator
     public static function translate($style, $default = 0)
     {
         switch ($cursorPlacement = Style::value($style, CursorPlacement::ATTRIBUTE)) {
-            case CursorPlacement::CURSOR_TOP_RIGHT:
+            case CursorPlacement::TOP_RIGHT:
                 return 0;
-            case CursorPlacement::CURSOR_NEWLINE:
+            case CursorPlacement::NEWLINE:
                 return 1;
-            case CursorPlacement::CURSOR_BOTTOM_LEFT:
+            case CursorPlacement::BOTTOM_LEFT:
                 return 2;
             case null:
                 return $default;

@@ -21,6 +21,7 @@ use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\CursorPlacement;
 use Relaxsd\Stylesheets\Attributes\Fill;
+use Relaxsd\Stylesheets\Attributes\FontColor;
 use Relaxsd\Stylesheets\Attributes\FontFamily;
 use Relaxsd\Stylesheets\Attributes\FontSize;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
@@ -56,7 +57,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 FontFamily::ATTRIBUTE => 'Arial',
                 FontStyle::ATTRIBUTE  => '',
                 FontSize::ATTRIBUTE   => 11,
-                'text-color'          => [0, 0, 0],
+                FontColor::ATTRIBUTE  => Color::BLACK
             ],
             // Adds to 'body'. Used for all cells, including p, h1, h2
             'cell'         => [
@@ -65,7 +66,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 Fill::ATTRIBUTE            => false,
                 'link'                     => '',
                 Multiline::ATTRIBUTE       => false, // Uses Cell, not MultiCell
-                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT,
+                CursorPlacement::ATTRIBUTE => CursorPlacement::TOP_RIGHT,
             ],
 
             // Adds to 'body'.
@@ -74,13 +75,13 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // The paragraph type.
             // Adds to 'body' and 'cell'
             'p'            => [
-                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
+                CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
                 Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
             ],
             // Heading 1 type
             // Adds to 'body' and 'cell'
             'h1'           => [
-                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
+                CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
                 FontSize::ATTRIBUTE        => 14,
                 FontStyle::ATTRIBUTE       => 'bold',
                 Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
@@ -88,7 +89,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             // Heading 2 type
             // Adds to 'body' and 'cell'
             'h2'           => [
-                CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT,
+                CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
                 FontSize::ATTRIBUTE        => 12,
                 FontStyle::ATTRIBUTE       => 'bold',
                 Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
@@ -107,7 +108,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
      *
      * @return self
      */
-    public function setFont($family, $style = FontStyle::FONT_STYLE_NORMAL, $size = 0)
+    public function setFont($family, $style = FontStyle::NORMAL, $size = 0)
     {
         $this->fpdf->SetFont(
             $family ?: '',

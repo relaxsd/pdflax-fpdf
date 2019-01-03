@@ -3,6 +3,7 @@
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
 use Relaxsd\Stylesheets\Attributes\Color;
+use Relaxsd\Stylesheets\Attributes\FontColor;
 use Relaxsd\Stylesheets\Attributes\FontFamily;
 use Relaxsd\Stylesheets\Attributes\FontSize;
 use Relaxsd\Stylesheets\Attributes\FontStyle;
@@ -20,15 +21,15 @@ class FontStyleTranslator
     {
         $result = '';
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::FONT_STYLE_BOLD)) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::BOLD)) {
             $result .= 'B';
         }
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::FONT_STYLE_ITALIC)) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::ITALIC)) {
             $result .= 'I';
         }
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::FONT_STYLE_UNDERLINE)) {
+        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::UNDERLINE)) {
             $result .= 'U';
         }
 
@@ -42,12 +43,12 @@ class FontStyleTranslator
     public static function applyStyle($fpdf, $style = null)
     {
 
-        list($r, $g, $b) = Color::toRGB(Style::value($style, 'text-color', 'black'));
+        list($r, $g, $b) = Color::toRGB(Style::value($style, FontColor::ATTRIBUTE, Color::BLACK));
         $fpdf->SetTextColor($r, $g, $b);
 
         $fpdf->SetFont(
             Style::value($style, FontFamily::ATTRIBUTE, ''),
-            self::translate(Style::value($style, FontStyle::ATTRIBUTE, FontStyle::FONT_STYLE_NORMAL)),
+            self::translate(Style::value($style, FontStyle::ATTRIBUTE, FontStyle::NORMAL)),
             Style::value($style, FontSize::ATTRIBUTE, 0)
         );
 

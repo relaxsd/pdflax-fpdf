@@ -55,11 +55,11 @@ class FpdfDocumentAdapterTest extends TestCase
                 ['FAMILY', 'BIU', 5]
             );
 
-        $self = $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_NORMAL, 1);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_BOLD, 2);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_ITALIC, 3);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_UNDERLINE, 4);
-        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::FONT_STYLE_BOLD . FontStyle::FONT_STYLE_ITALIC . FontStyle::FONT_STYLE_UNDERLINE, 5);
+        $self = $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::NORMAL, 1);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::BOLD, 2);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::ITALIC, 3);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::UNDERLINE, 4);
+        $this->fpdfDocumentAdapter->setFont('FAMILY', FontStyle::BOLD . FontStyle::ITALIC . FontStyle::UNDERLINE, 5);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
@@ -536,14 +536,14 @@ class FpdfDocumentAdapterTest extends TestCase
 
         $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text', [
             Multiline::ATTRIBUTE       => true,
-            CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_BOTTOM_LEFT // FPdf default, should be in 2 in all styles that use multiline
+            CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT // FPdf default, should be in 2 in all styles that use multiline
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
         // Our test should set the cursor at (6,7) adding 1 and 3 units for margins
         // In real life, the cursor would have moved to the bottom left of the cell, but not in the mock.
-        // For CURSOR_BOTTOM_LEFT, expect no changes to the cursor.
+        // For BOTTOM_LEFT, expect no changes to the cursor.
         $this->assertEquals([6 + 1, 7 + 3], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
     }
@@ -565,7 +565,7 @@ class FpdfDocumentAdapterTest extends TestCase
 
         $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text', [
             Multiline::ATTRIBUTE       => true,
-            CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_NEWLINE
+            CursorPlacement::ATTRIBUTE => CursorPlacement::NEWLINE
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -574,7 +574,7 @@ class FpdfDocumentAdapterTest extends TestCase
         // We cannot test this
         // $this->assertEquals([1 + 0 , 3 + 7], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
-        // For CURSOR_NEWLINE, expect a newline (x=0) adding 1 for left margin
+        // For NEWLINE, expect a newline (x=0) adding 1 for left margin
         // In real life, the cursor Y would have moved to the bottom of the cell, but not in the mock.
         $this->assertEquals([0 + 1, 7 + 3], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
@@ -597,7 +597,7 @@ class FpdfDocumentAdapterTest extends TestCase
 
         $self = $this->fpdfDocumentAdapter->cell(6, 7, 10, 20, 'text', [
             Multiline::ATTRIBUTE       => true,
-            CursorPlacement::ATTRIBUTE => CursorPlacement::CURSOR_TOP_RIGHT
+            CursorPlacement::ATTRIBUTE => CursorPlacement::TOP_RIGHT
         ]);
 
         $this->assertSame($this->fpdfDocumentAdapter, $self);
@@ -606,7 +606,7 @@ class FpdfDocumentAdapterTest extends TestCase
         // We cannot test this
         // $this->assertEquals([1 + 6 , 3 + 7], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
-        // For CURSOR_TOP_RIGHT, our test should move the cursor to (16,7) adding 1 and 3 units for left/top margins
+        // For TOP_RIGHT, our test should move the cursor to (16,7) adding 1 and 3 units for left/top margins
         $this->assertEquals([1 + 16, 3 + 7], [$this->fpdfMock->x, $this->fpdfMock->y]);
 
     }
@@ -625,10 +625,10 @@ class FpdfDocumentAdapterTest extends TestCase
 
         // At cursor, to right margin and bottom margin
         $self = $this->fpdfDocumentAdapter->text(10, 'text', [
-            'text-color'  => 'red',
+            'font-color'  => 'red',
             'font-family' => 'family',
+            'font-size'   => 10,
             'font-style'  => 'bold',
-            'font-size'   => 10
         ], ['href' => 'url']);
 
         // Assert fluent interface
@@ -887,10 +887,10 @@ class FpdfDocumentAdapterTest extends TestCase
 
         // Anchor with styling
         $self = $this->fpdfDocumentAdapter->a('text', 'url', [
-            'text-color'  => 'red',
+            'font-color'  => 'red',
             'font-family' => 'family',
+            'font-size'   => 10,
             'font-style'  => 'bold',
-            'font-size'   => 10
         ]);
         $this->assertSame($this->fpdfDocumentAdapter, $self);
 
