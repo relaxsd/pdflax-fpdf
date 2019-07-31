@@ -49,6 +49,7 @@ class FontStyleTranslator
         $fpdf->SetFont(
             Style::value($style, FontFamily::ATTRIBUTE, ''),
             self::translate(Style::value($style, FontStyle::ATTRIBUTE, FontStyle::NORMAL)),
+            // TODO: Use FontSize::DEFAULT (16pt?) instead of 0 (which means 'leave unchanged' in FPDF)
             Style::value($style, FontSize::ATTRIBUTE, 0)
         );
 
