@@ -861,7 +861,7 @@ class FpdfDocumentAdapterTest extends TestCase
 
         // This test should set the text color and the font
         $this->fpdfMock->expects($this->once())->method('SetTextColor')->with(0, 0, 0);
-        $this->fpdfMock->expects($this->once())->method('SetFont')->with('Arial', '', 11);
+        $this->fpdfMock->expects($this->once())->method('SetFont')->with('Arial', '', 12);
 
         // This test should call Write() on FPdf
         $this->fpdfMock->expects($this->once())->method('Write')->with(6, 'text', 'url');

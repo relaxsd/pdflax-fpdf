@@ -56,7 +56,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
                 Align::ATTRIBUTE      => Align::LEFT,
                 FontFamily::ATTRIBUTE => 'Arial',
                 FontStyle::ATTRIBUTE  => '',
-                FontSize::ATTRIBUTE   => 11,
+                FontSize::ATTRIBUTE   => 12,
                 FontColor::ATTRIBUTE  => Color::BLACK
             ],
             // Adds to 'body'. Used for all cells, including p, h1, h2
@@ -83,15 +83,31 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
             'h1'           => [
                 CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
                 FontSize::ATTRIBUTE        => 14,
-                FontStyle::ATTRIBUTE       => 'bold',
+                FontStyle::ATTRIBUTE       => FontStyle::BOLD,
                 Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
             ],
             // Heading 2 type
             // Adds to 'body' and 'cell'
             'h2'           => [
                 CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
+                FontSize::ATTRIBUTE        => 13,
+                FontStyle::ATTRIBUTE       => FontStyle::BOLD,
+                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
+            ],
+            // Heading 2 type
+            // Adds to 'body' and 'cell'
+            'h3'           => [
+                CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
                 FontSize::ATTRIBUTE        => 12,
-                FontStyle::ATTRIBUTE       => 'bold',
+                FontStyle::ATTRIBUTE       => FontStyle::BOLD_ITALIC,
+                Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
+            ],
+            // Heading 2 type
+            // Adds to 'body' and 'cell'
+            'h4'           => [
+                CursorPlacement::ATTRIBUTE => CursorPlacement::BOTTOM_LEFT,
+                FontSize::ATTRIBUTE        => 11,
+                FontStyle::ATTRIBUTE       => FontStyle::ITALIC,
                 Multiline::ATTRIBUTE       => true, // Uses MultiCell, not Cell
             ],
             '.align-right' => [
