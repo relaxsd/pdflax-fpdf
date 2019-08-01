@@ -11,8 +11,8 @@
   ],
   "require": {
     "anouar/fpdf": ">=1.0.1",
-    "relaxsd/pdflax": "^0.9@dev",
-    "relaxsd/php-stylesheets": "*@dev"
+    "relaxsd/pdflax": "0.8.*",
+    "relaxsd/php-stylesheets": "2.0.*"
   },
   "require-dev": {
     "phpunit/phpunit": "^4"
