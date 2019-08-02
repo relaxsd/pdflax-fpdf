@@ -6,6 +6,7 @@ use Anouar\Fpdf\Fpdf;
 use Relaxsd\Pdflax\Contracts\PdfCreatorOptionsInterface;
 use Relaxsd\Pdflax\Contracts\PdfDocumentInterface;
 use Relaxsd\Pdflax\Creator\PdfCreator;
+use Relaxsd\Pdflax\Fpdf\Extensions\Utf8\Utf8SupportFactory;
 use Relaxsd\Stylesheets\Attributes\PageOrientation;
 use Relaxsd\Stylesheets\Attributes\PageSize;
 
@@ -75,7 +76,14 @@ class FPdfPdfCreator extends PdfCreator
 
         // Additional settings can be put on the 'raw' object later on.
 
-        return new FpdfDocumentAdapter($fpdf);
+        $fpdfAdapter = new FpdfDocumentAdapter($fpdf);
+
+        // Because FPdf has poor UTF-8 support, allow a textFilter to be applied, e.g. 'iconv' or 'utf8_decode'.
+        if (array_key_exists('utf8filter', $options)) {
+            $fpdfAdapter->addTextFilter(Utf8SupportFactory::create($options['utf8filter']));
+        }
+
+        return $fpdfAdapter;
     }
 
     /**

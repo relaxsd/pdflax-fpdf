@@ -16,6 +16,7 @@ use Relaxsd\Pdflax\Fpdf\Translators\PageSizeTranslator;
 use Relaxsd\Pdflax\Fpdf\Translators\RectStyleTranslator;
 use Relaxsd\Pdflax\PdfDOMTrait;
 use Relaxsd\Pdflax\PdfStyleTrait;
+use Relaxsd\Pdflax\TextFilterTrait;
 use Relaxsd\Stylesheets\Attributes\Align;
 use Relaxsd\Stylesheets\Attributes\Border;
 use Relaxsd\Stylesheets\Attributes\Color;
@@ -34,6 +35,7 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
 
     use PdfDOMTrait;
     use PdfStyleTrait;
+    use TextFilterTrait;
 
     /**
      * @var Fpdf
@@ -566,6 +568,9 @@ class FpdfDocumentAdapter implements PdfDocumentInterface
         if (!isset($h)) $h = $this->getInnerHeight() - $y;
 
         $style = Style::merged($this->getStyle('body'), $this->getStyle('cell'), $style);
+
+        // Apply text filters, e.g. to convert UTF-8 to ISO-8859-1 or windows-1252
+        $txt = $this->applyTextFilters($txt);
 
         $w = $this->parseGlobalValue_h($w);
         $h = $this->parseGlobalValue_v($h);
