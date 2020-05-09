@@ -2,6 +2,7 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Illuminate\Support\Str;
 use Relaxsd\Stylesheets\Attributes\Color;
 use Relaxsd\Stylesheets\Attributes\FontColor;
 use Relaxsd\Stylesheets\Attributes\FontFamily;
@@ -21,15 +22,15 @@ class FontStyleTranslator
     {
         $result = '';
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::BOLD)) {
+        if ($pdflaxFontStyle && Str::contains($pdflaxFontStyle, FontStyle::BOLD)) {
             $result .= 'B';
         }
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::ITALIC)) {
+        if ($pdflaxFontStyle && Str::contains($pdflaxFontStyle, FontStyle::ITALIC)) {
             $result .= 'I';
         }
 
-        if ($pdflaxFontStyle && str_contains($pdflaxFontStyle, FontStyle::UNDERLINE)) {
+        if ($pdflaxFontStyle && Str::contains($pdflaxFontStyle, FontStyle::UNDERLINE)) {
             $result .= 'U';
         }
 
