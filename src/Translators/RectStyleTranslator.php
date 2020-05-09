@@ -2,6 +2,7 @@
 
 namespace Relaxsd\Pdflax\Fpdf\Translators;
 
+use Illuminate\Support\Str;
 use Relaxsd\Stylesheets\Attributes\BorderColor;
 use Relaxsd\Stylesheets\Attributes\BorderWidth;
 use Relaxsd\Stylesheets\Attributes\Color;
@@ -45,7 +46,7 @@ class RectStyleTranslator
         $rectStyle = self::translate($style);
 
         // FPdf draws a border for 'D' (draw) and '' (the default)
-        if ($rectStyle == '' || str_contains($rectStyle, 'D')) {
+        if ($rectStyle == '' || Str::contains($rectStyle, 'D')) {
 
             list($r, $g, $b) = Color::toRGB(Style::value($style, BorderColor::ATTRIBUTE, 'black'));
             $fpdf->SetDrawColor($r, $g, $b);
@@ -57,7 +58,7 @@ class RectStyleTranslator
         }
 
         // FPdf draws a border for 'F' only
-        if (str_contains($rectStyle, 'F')) {
+        if (Str::contains($rectStyle, 'F')) {
 
             // Black is the FPdf default
             list($r, $g, $b) = Color::toRGB(Style::value($style, FillColor::ATTRIBUTE, 'black'));
