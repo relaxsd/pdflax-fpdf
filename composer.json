@@ -10,13 +10,19 @@
     }
   ],
   "require": {
-    "anouar/fpdf": ">=1.0.1",
+    "anouar/fpdf": "~2.1.0",
     "relaxsd/pdflax": "0.8.*",
     "relaxsd/php-stylesheets": "2.0.*"
   },
   "require-dev": {
     "phpunit/phpunit": "^4"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url":  "git@github.com:relaxsd/laravel-fpdf.git"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Relaxsd\\Pdflax\\Fpdf\\": "src"
